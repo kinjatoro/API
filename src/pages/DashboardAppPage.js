@@ -123,10 +123,12 @@ export default function DashboardAppPage() {
 
         <Box sx={{m: 50}} />
 
+        <Box sx={{backgroundColor: colorPalabra, py:15}}>
+
         <Stack spacing={2} sx={{display: "flex",flexDirection: 'column', alignItems: 'center', justifyContent: "center", my:6, px:2}}>
 
           
-          <Typography variant="h2"  align = 'center'> 
+          <Typography variant="h2"  align = 'center' sx={{color: "white"}}> 
             ¿Qué podés aprender en Neilo?
           </Typography>
           
@@ -134,9 +136,9 @@ export default function DashboardAppPage() {
           
           
           
-            <Typography variant="h2" style={{ opacity: mostrar ? 1 : 0, transition: 'opacity 0.5s', color: colorPalabra}}>{palabraActual}</Typography>
+            <Typography variant="h2" style={{ opacity: mostrar ? 1 : 0, transition: 'opacity 0.5s', color: "white"}}>{palabraActual}</Typography>
             
-        </Stack>
+        </Stack></Box>
         
         <Box sx={{m: 50}} />
 
