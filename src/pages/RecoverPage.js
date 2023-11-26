@@ -62,6 +62,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const [state, setState ] = useState(true);
+  const [correo, setCorreo] = useState('');
 
   const handleClick = () => {
         setState(false);
@@ -101,7 +102,8 @@ const handleClick3 = () => {
             </Typography>
 
             <Stack spacing={3}>
-            <TextField name="correo" label="Correo electrónico" sx={{my:2}}/>
+            <TextField name="correo" label="Correo electrónico" sx={{my:2}} value={correo}
+            onChange={(e) => setCorreo(e.target.value)}/>
              </Stack>
 
             <Button fullWidth size="large" type="submit" variant="contained" onClick={handleClick}sx={{mt:2}} disableElevation >

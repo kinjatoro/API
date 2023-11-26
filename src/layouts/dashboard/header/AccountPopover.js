@@ -43,6 +43,25 @@ export default function AccountPopover() {
     navigate('/dashboard/blog');
   };
 
+  const handleContrataciones = () => {
+    setOpen(null);
+    navigate('/dashboard/user');
+  };
+
+  const handleMensajes = () => {
+    setOpen(null);
+    navigate('/dashboard/mensajes');
+  };
+
+  const handleMisPublicaciones = () => {
+    setOpen(null);
+    navigate('/dashboard/mispublicaciones');
+  };
+  const handleComentarios = () => {
+    setOpen(null);
+    navigate('/dashboard/comentarios');
+  };
+
 
   return (
     <>
@@ -106,15 +125,37 @@ export default function AccountPopover() {
             <MenuItem onClick={handleServicios}>
               Servicios
             </MenuItem>
+
+
+            {auth ? (<>
+          <MenuItem onClick={handleContrataciones}>
+              Contrataciones
+            </MenuItem>
+
+            <MenuItem onClick={handleMensajes}>
+              Mensajes
+            </MenuItem>
+
+            <MenuItem onClick={handleMisPublicaciones}>
+              Mis publicaciones
+            </MenuItem>
+
+            <MenuItem onClick={handleComentarios}>
+              Comentarios
+            </MenuItem>
+        
+
+
+        <Divider sx={{ borderStyle: 'dashed' }} />
+        
+        <MenuItem onClick={handleAuth} >
+          Cerrar sesión
+        </MenuItem></>) : (<></>)}
+            
           
         </Stack>
 
-        {auth ? (<>
-        <Divider sx={{ borderStyle: 'dashed' }} />
         
-        <MenuItem onClick={handleAuth} sx={{ m: 1 }}>
-          Cerrar sesión
-        </MenuItem></>) : (<></>)}
 
 
       </Popover>
