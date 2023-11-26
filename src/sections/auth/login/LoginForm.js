@@ -18,6 +18,9 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { auth, setAuth } = useAuth();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
 
   const handleClick = () => {
     navigate('/dashboard');
@@ -31,12 +34,15 @@ export default function LoginForm() {
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="correo" label="Correo electrónico" />
+        <TextField name="correo" label="Correo electrónico" value={email}
+          onChange={(e) => setEmail(e.target.value)}/>
 
         <TextField
           name="Contraseña"
           label="Contraseña"
           type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

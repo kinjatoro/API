@@ -17,6 +17,7 @@ export default function RegisterForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const { auth, setAuth } = useAuth();
+  const [exp, setExp] = useState(false);
 
   const handleClick = () => {
     navigate('/dashboard', { replace: true });
