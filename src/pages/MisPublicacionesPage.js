@@ -191,9 +191,9 @@ export default function UserPage() {
 
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, servicio)} />
-                        </TableCell>
+                        <TableCell padding="checkbox"/>
+                          
+                        
 
                         
 

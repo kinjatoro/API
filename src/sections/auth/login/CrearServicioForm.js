@@ -19,6 +19,15 @@ export default function CrearServicioForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const { auth, setAuth } = useAuth();
+  const [nombre, setNombre] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [duracion, setDuracion] = useState("");
+  const [frecuencia, setFrecuencia] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [costo, setCosto] = useState("");
+
+  
+
 
   const handleClick = () => {
     navigate('/dashboard/mispublicaciones');
@@ -28,46 +37,32 @@ export default function CrearServicioForm() {
   return (
     <>
       <Stack spacing={2}>
-        
+      <TextField name="Nombre del servicio" label="Nombre del servicio" value={nombre}
+          onChange={(e) => setNombre(e.target.value)}/>
       <Box sx={{ minWidth: 120, }}>
-      <FormControl fullWidth>
-        <InputLabel id="servicio">Servicio</InputLabel>
-        <Select
-          labelId="servicio"
-          id="servicio"
-          label="Servicio"
-          MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
 
+
+      
+
+      <FormControl fullWidth>
+        <InputLabel id="Categoria">Categoría</InputLabel>
+        <Select
+          labelId="Categoria"
+          id="Categoria"
+          label="Categoria"
+          MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
+          value={categoria}
+          onChange={(e) => setCategoria(e.target.value)}
         >
-        <MenuItem value="Clases de Arquitectura">Clases de Arquitectura</MenuItem>
-        <MenuItem value="Clases de Arte">Clases de Arte</MenuItem>
-        <MenuItem value="Clases de Arte Digital">Clases de Arte Digital</MenuItem>
-        <MenuItem value="Clases de Baile">Clases de Baile</MenuItem>
-        <MenuItem value="Clases de Ciencias">Clases de Ciencias</MenuItem>
-        <MenuItem value="Clases de Ciencias">Clases de Ciencias</MenuItem>
-        <MenuItem value="Clases de Cocina">Clases de Cocina</MenuItem>
-        <MenuItem value="Clases de Canto">Clases de Canto</MenuItem>
-        <MenuItem value="Clases de Costura">Clases de Costura</MenuItem>
-        <MenuItem value="Clases de Diseño">Clases de Diseño</MenuItem>
-        <MenuItem value="Clases de Economía">Clases de Economía</MenuItem>
-        <MenuItem value="Clases de Escritura">Clases de Escritura</MenuItem>
-        <MenuItem value="Clases de Fitness">Clases de Fitness</MenuItem>
-        <MenuItem value="Clases de Fotografía">Clases de Fotografía</MenuItem>
-        <MenuItem value="Clases de Guitarra">Clases de Guitarra</MenuItem>
-        <MenuItem value="Clases de Historia">Clases de Historia</MenuItem>
-        <MenuItem value="Clases de Idiomas">Clases de Idiomas</MenuItem>
-        <MenuItem value="Clases de Jardinería">Clases de Jardinería</MenuItem>
-        <MenuItem value="Clases de Marketing">Clases de Marketing</MenuItem>
-        <MenuItem value="Clases de Matemáticas">Clases de Matemáticas</MenuItem>
-        <MenuItem value="Clases de Meditación">Clases de Meditación</MenuItem>
-        <MenuItem value="Clases de Natación">Clases de Natación</MenuItem>
-        <MenuItem value="Clases de Piano">Clases de Piano</MenuItem>
-        <MenuItem value="Clases de Programación">Clases de Programación</MenuItem>
-        <MenuItem value="Clases de Psicología">Clases de Psicología</MenuItem>
-        <MenuItem value="Clases de Repostería">Clases de Repostería</MenuItem>
-        <MenuItem value="Clases de Robótica">Clases de Robótica</MenuItem>
-        <MenuItem value="Clases de Teatro">Clases de Teatro</MenuItem>
-        <MenuItem value="Clases de Yoga">Clases de Yoga</MenuItem>
+        <MenuItem value="Idiomas">Idiomas</MenuItem>
+        <MenuItem value="Deportes">Deportes</MenuItem>
+        <MenuItem value="Música">Música</MenuItem>
+        <MenuItem value="Arte">Arte</MenuItem>
+        <MenuItem value="Baile">Baile</MenuItem>
+        <MenuItem value="Apoyo Escolar">Apoyo Escolar</MenuItem>
+        <MenuItem value="Apoyo Universitario">Apoyo Universitario</MenuItem>
+        <MenuItem value="Cocina">Cocina</MenuItem>
+        
         <MenuItem value="Otros">Otros</MenuItem>
         </Select>
       </FormControl>
@@ -80,6 +75,8 @@ export default function CrearServicioForm() {
           labelId="duracion"
           id="duracion"
           label="Duracion"
+          value={duracion}
+          onChange={(e) => setDuracion(e.target.value)}
         >
          <MenuItem value="30 Minutos">30 Minutos</MenuItem>
          <MenuItem value="1 Hora">1 Hora</MenuItem>
@@ -97,6 +94,8 @@ export default function CrearServicioForm() {
           labelId="frecuencia"
           id="frecuencia"
           label="Frecuencia"
+          value={frecuencia}
+          onChange={(e) => setFrecuencia(e.target.value)}
         >
          <MenuItem value="Única">Única</MenuItem>
          <MenuItem value="Semanal">Semanal</MenuItem>
@@ -104,8 +103,12 @@ export default function CrearServicioForm() {
         </Select>
       </FormControl>
     </Box>
-        <TextField name="descripcion" label="Descripcion" multiline rows={5}/>
-        <TextField name="costo" label="Costo (USD)" type="number"/>
+
+        <TextField name="descripcion" label="Descripcion" multiline rows={5} value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}/>
+        <TextField name="costo" label="Costo (USD)" type="number" value={costo}
+          onChange={(e) => setCosto(e.target.value)}/>
+        
       </Stack>
 
       <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick} sx={{mt:3}}>
