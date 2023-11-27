@@ -20,7 +20,7 @@ import {
   Typography,
   IconButton,
   TableContainer,
-  TablePagination,
+  TablePagination,Modal,Box,Grid
 } from '@mui/material';
 // components
 import Label from '../components/label';
@@ -89,6 +89,8 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const [openModal3, setOpenModal3] = useState(false);
+
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
@@ -139,6 +141,16 @@ export default function UserPage() {
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
+  };
+
+  const handleEliminar = () => { 
+    setOpenModal3(true);
+    setOpen(null);
+    
+  };
+
+  const handleCloseModal3 = () => {
+    setOpenModal3(false);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -284,11 +296,36 @@ export default function UserPage() {
           Rechazar
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
+        <MenuItem onClick={handleEliminar} sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Eliminar
         </MenuItem>
       </Popover>
+
+
+      <Modal
+        open={openModal3}
+        onClose={handleCloseModal3}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Container maxWidth="sm" sx={{ mt:25, padding: '20px', maxHeight: '675px', backgroundColor: 'white', borderRadius: 5 }}>
+
+          <Box mt={1} mb={2} backgroundColor='white' align='center'>
+            <Typography variant="h4" gutterBottom>
+
+            <strong>¿Estás seguro que deseas eliminar el comentario?</strong>
+            </Typography>
+          </Box>
+
+          <Box backgroundColor='white'>
+            <Grid align="center">
+              <Button variant="contained" size="large" color="primary" onClick={''}>Eliminar</Button>
+              <Button sx= {{ml: 3}} variant="outlined" size="large" color="primary" onClick={handleCloseModal3}>Volver atrás</Button>
+            </Grid>
+          </Box>
+        </Container>
+      </Modal>
     </>
   );
 }
