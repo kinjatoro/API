@@ -21,7 +21,7 @@ import {
   Typography,
   IconButton,
   TableContainer,
-  TablePagination,Grid,Modal,Box,
+  TablePagination,Grid,Modal,Box,FormControl,InputLabel,Select,Divider,TextField
 } from '@mui/material';
 // components
 import Label from '../components/label';
@@ -90,12 +90,31 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openModal3, setOpenModal3] = useState(false);
 
+  const [nombre, setNombre] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [duracion, setDuracion] = useState("");
+  const [frecuencia, setFrecuencia] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [costo, setCosto] = useState("");
+  const [openModal2, setOpenModal2] = useState(false);
+  const [file, setFile] = useState(null);
+
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
 
   const handleCloseMenu = () => {
     setOpen(null);
+  };
+
+  const handleCloseModal2 = () => {
+    setOpenModal2(false);
+    setNombre('');
+    setCategoria('');
+    setDuracion('');
+    setFrecuencia('');
+    setDescripcion('');
+    setCosto('');
   };
 
   const handleCloseModal3 = () => {
@@ -157,6 +176,33 @@ export default function UserPage() {
     setOpen(null);
     
   };
+
+  const maxFileNameLength = 40;
+  const getFileDisplayName = () => {
+    if (file) {
+      const fileName = file.name;
+      if (fileName.length > maxFileNameLength) {
+        return `...${fileName.slice(-maxFileNameLength)}`;
+      }
+      return fileName;
+    }
+    return '';
+  };
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+  };
+
+  const handleModificarServicio = () => { 
+    setOpenModal2(true);
+    setOpen(null);
+  }
+
+  const handleBackendPublicar = () => { 
+    setOpenModal2(false);
+  }
+
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
@@ -290,7 +336,7 @@ export default function UserPage() {
         }}
       >
 
-        <MenuItem>
+        <MenuItem onClick={handleModificarServicio}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Editar
         </MenuItem>
@@ -337,6 +383,201 @@ export default function UserPage() {
             <Grid align="center">
               <Button variant="contained" size="large" color="primary" onClick={''}>Eliminar</Button>
               <Button sx= {{ml: 3}} variant="outlined" size="large" color="primary" onClick={handleCloseModal3}>Volver atrás</Button>
+            </Grid>
+          </Box>
+        </Container>
+      </Modal>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <Modal
+        open={openModal2}
+        onClose={handleCloseModal2}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        sx={{overflow: 'auto'}}
+      >
+
+      
+        <Container maxWidth="sm" sx={{ mt: 4, padding: '20px', maxHeight: '675px', backgroundColor: 'white', borderRadius: 5 }}>
+
+          <Box mt={1} mb={2} backgroundColor='white' align='center'>
+            <Typography variant="h4" gutterBottom>
+
+              <strong>Modificar Evento</strong>
+            </Typography>
+          </Box>
+
+          <Stack spacing={2}>
+      <TextField name="Nombre del servicio" label="Nombre del servicio" value={nombre}
+          onChange={(e) => setNombre(e.target.value)}/>
+      <Box sx={{ minWidth: 120, }}>
+
+
+      
+
+      <FormControl fullWidth>
+        <InputLabel id="Categoria">Categoría</InputLabel>
+        <Select
+          labelId="Categoria"
+          id="Categoria"
+          label="Categoria"
+          MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
+          value={categoria}
+          onChange={(e) => setCategoria(e.target.value)}
+        >
+        <MenuItem value="Idiomas">Idiomas</MenuItem>
+        <MenuItem value="Deportes">Deportes</MenuItem>
+        <MenuItem value="Música">Música</MenuItem>
+        <MenuItem value="Arte">Arte</MenuItem>
+        <MenuItem value="Baile">Baile</MenuItem>
+        <MenuItem value="Apoyo Escolar">Apoyo Escolar</MenuItem>
+        <MenuItem value="Apoyo Universitario">Apoyo Universitario</MenuItem>
+        <MenuItem value="Cocina">Cocina</MenuItem>
+        
+        <MenuItem value="Otros">Otros</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
+
+        <Box sx={{ minWidth: 120}}>
+      <FormControl fullWidth>
+        <InputLabel id="duracion">Duracion</InputLabel>
+        <Select
+          labelId="duracion"
+          id="duracion"
+          label="Duracion"
+          value={duracion}
+          onChange={(e) => setDuracion(e.target.value)}
+        >
+         <MenuItem value="30 Minutos">30 Minutos</MenuItem>
+         <MenuItem value="1 Hora">1 Hora</MenuItem>
+         <MenuItem value="2 Horas">2 Horas</MenuItem>
+         <MenuItem value="3 Horas">3 Horas</MenuItem>
+         <MenuItem value="4 Horas">4 Horas</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
+    
+    <Box sx={{ minWidth: 120}}>
+      <FormControl fullWidth>
+        <InputLabel id="frecuencia">Frecuencia</InputLabel>
+        <Select
+          labelId="frecuencia"
+          id="frecuencia"
+          label="Frecuencia"
+          value={frecuencia}
+          onChange={(e) => setFrecuencia(e.target.value)}
+        >
+         <MenuItem value="Única">Única</MenuItem>
+         <MenuItem value="Semanal">Semanal</MenuItem>
+         <MenuItem value="Mensual">Mensual</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
+
+        <TextField name="descripcion" label="Descripcion" multiline rows={3} value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}/>
+        <TextField name="costo" label="Costo (USD)" type="number" value={costo}
+          onChange={(e) => setCosto(e.target.value)}/>
+        
+      </Stack>
+
+
+
+          <Box my={2} align="center" backgroundColor='white'sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} >
+          <label htmlFor="fileInput" >
+              <input
+              type="file"
+              accept="image/*" // Puedes especificar el tipo de archivo que esperas aquí
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+              id="fileInput"
+            />
+            
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<Iconify icon="eva:cloud-upload-outline" />}
+                component="span"
+                
+              >
+                Subir foto
+              </Button>
+            </label>
+            {file && (
+              <>
+          <p style={{ padding: 0, margin: 0 }}> {getFileDisplayName()}</p>
+          </>
+       
+      )}
+
+
+          </Box>
+          <Box my={2}>
+            <Divider />
+          </Box>
+          <Box backgroundColor='white'>
+            <Grid align="center">
+              <Button variant="contained" 
+              
+                color="primary"
+                startIcon={<Iconify icon="ic:baseline-plus" />}
+                onClick={handleBackendPublicar}
+              
+              >
+                Guardar cambios
+              </Button>
             </Grid>
           </Box>
         </Container>
