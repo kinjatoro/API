@@ -7,7 +7,7 @@ import { fToNow } from '../../../utils/formatTime';
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
-
+import { useAuth } from '../../../Auth'
 // ----------------------------------------------------------------------
 
 AppNewsUpdate.propTypes = {
@@ -19,6 +19,10 @@ AppNewsUpdate.propTypes = {
 export default function AppNewsUpdate({ title, subheader, list, ...other }) {
   
   const [state, setState ] = useState(true);
+  const { auth, setAuth } = useAuth();
+  const [name, setName] = useState('');
+  const [text, setText] = useState('');
+  const [rating, setRating] = useState('');
 
   const handleClick = () => {
     setState(false);
@@ -26,11 +30,16 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
 
   return (
     <Card {...other}>
-      {(state ? (<>
+
+    {!auth ? (
+
+
+  <>{(state ? (<>
       <CardHeader title={title} subheader={subheader} />
       <Stack spacing={2} sx={{ p: 3, px: 3 }}>
-      <TextField name="nombre" label="Nombre"/>
-      <TextField name="comentario" label="Agregar un comentario" multiline rows={3}/>
+      <TextField name="nombre" label="Nombre" value={name} onChange={(e) => setName(e.target.value)}/>
+      <TextField name="comentario" label="Agregar un comentario" multiline rows={3} onChange={(e) => setText(e.target.value)}
+          value={text}/>
 
       <FormControl fullWidth>
         <InputLabel id="calificacion">Calificación</InputLabel>
@@ -38,12 +47,14 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
           labelId="calificacion"
           id="calificacion"
           label="calificacion"
+          onChange={(e) => setRating(e.target.value)}
+          value={rating}
         >
-         <MenuItem value="1 estrella"><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/></MenuItem>
-         <MenuItem value="2 estrellas"><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/></MenuItem>
-         <MenuItem value="3 estrellas"><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/></MenuItem>
-         <MenuItem value="4 estrellas"><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/></MenuItem>
-         <MenuItem value="5 estrellas"><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/></MenuItem>
+         <MenuItem value="1"><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/></MenuItem>
+         <MenuItem value="2"><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/></MenuItem>
+         <MenuItem value="3"><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/></MenuItem>
+         <MenuItem value="4"><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/></MenuItem>
+         <MenuItem value="5"><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/><Iconify sx={{color: '#2065D1'}} icon={'solar:star-bold'}/></MenuItem>
         </Select>
       </FormControl>
 
@@ -57,18 +68,23 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
           El comentario fue enviado. Estará pendiente a revisión.
         </Typography>
       </Stack>
-      </>))}
+      </>))}</>
+      ) : (
+        <></>
+      )}
+
+
+
       
       <Scrollbar>
-        <Stack spacing={3} sx={{ p: 3, pr: 0, pt:0 }}>
-        <Typography variant="h6">Comentarios</Typography>
-          {list.map((news) => (
+          <Stack spacing={3} sx={{ p: 3, pr: 0, pt: 2 }}>
+            <Typography variant="h6">Comentarios</Typography>
+            {  ( list.length === 0 ? (<div> No hay comentarios. </div>) : (<> {list.map((news) => (
             <NewsItem key={news.id} news={news} />
-          ))}
-        </Stack>
-      </Scrollbar>
-
-    </Card>
+          ))}</>)) }
+          </Stack>
+        </Scrollbar>
+      </Card>
   );
 }
 

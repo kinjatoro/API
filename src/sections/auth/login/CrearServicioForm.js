@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Typography, Container, Box, MenuItem,InputLabel, FormControl, Select } from '@mui/material';
+import { Link, Stack,Card,CardContent,Divider,Button, IconButton, InputAdornment, TextField, Checkbox, Typography, Container, Box, MenuItem,InputLabel, FormControl, Select } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
 import { useAuth } from '../../../Auth'
@@ -9,7 +9,7 @@ import { useAuth } from '../../../Auth'
 // components
 import Iconify from '../../../components/iconify';
 
-
+import negocio from '../../../negocio.jpg'
 
 
 // ----------------------------------------------------------------------
@@ -26,12 +26,17 @@ export default function CrearServicioForm() {
   const [descripcion, setDescripcion] = useState("");
   const [costo, setCosto] = useState("");
 
-  
+  const [banner, setBanner] = useState(null);
 
 
   const handleClick = () => {
     navigate('/dashboard/mispublicaciones');
   }
+
+  const handleBannerChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setBanner(selectedFile);
+  };
 
   
   return (
@@ -108,6 +113,54 @@ export default function CrearServicioForm() {
           onChange={(e) => setDescripcion(e.target.value)}/>
         <TextField name="costo" label="Costo (USD)" type="number" value={costo}
           onChange={(e) => setCosto(e.target.value)}/>
+
+
+
+
+
+
+<Card  sx={{mb:4,mr:3, ml:6, backgroundColor:'transparent',}}>
+      <CardContent>
+        <Box
+          sx={{
+            alignItems: 'center',
+            display: 'flex',
+            flexDirection: 'column'
+            
+          }}
+        >
+   
+              <img src={banner ? URL.createObjectURL(banner) : negocio} alt='banner' style={{ 
+              width: "200px",
+              height: "200px", 
+              objectFit: "cover", 
+              objectPosition: "center",
+              borderRadius: "10%",
+              }
+              }/>
+
+              
+        
+        </Box>
+      </CardContent>
+      <Divider />
+      <label htmlFor="fileInput2" >
+              <input
+              type="file"
+              accept="image/*" 
+              style={{ display: 'none' }}
+              onChange={handleBannerChange}
+              id="fileInput2"
+            />
+        <Button
+          fullWidth
+          variant="text"
+          color='secondary'
+          component="span"
+        >
+          Subir foto del servicio
+        </Button></label>
+    </Card>
         
       </Stack>
 

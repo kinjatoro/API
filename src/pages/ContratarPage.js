@@ -46,6 +46,13 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [state, setState ] = useState(true);
 
+  const [telefono, setTelefono ] = useState('');
+  const [email, setEmail ] = useState('');
+  const [horario, setHorario ] = useState('');
+  const [mensaje, setMensaje ] = useState('');
+
+
+
   const handleClick = () => {
     setState(false);
   }
@@ -73,10 +80,10 @@ export default function RegisterPage() {
             </Typography>
 
             <Stack spacing={2}>
-        <TextField name="telefono" label="Telefono" />
-        <TextField name="mail" label="Mail" />
-        <TextField name="horario" label="Horario de referencia"/>
-        <TextField name="mensaje" label="Mensaje al proveedor" multiline rows={5}/>
+        <TextField name="telefono" label="Telefono" value={telefono} onChange={(e) => setTelefono(e.target.value)}/>
+        <TextField name="mail" label="Mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <TextField name="horario" label="Horario de referencia" value={horario} onChange={(e) => setHorario(e.target.value)}/>
+        <TextField name="mensaje" label="Mensaje al proveedor" multiline rows={5} value={mensaje} onChange={(e) => setMensaje(e.target.value)}/>
         
       </Stack>
 
