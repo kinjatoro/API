@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Link, Container, Typography, Divider, Stack, Button,InputAdornment,TextField,IconButton,
+import { Link, Container, Typography, Divider, Stack, Button,
+  InputAdornment,TextField,IconButton,CardActions,Card,Avatar,
+  CardContent,Box
   } from '@mui/material';
 
   import { LoadingButton } from '@mui/lab';
@@ -16,6 +18,7 @@ import Iconify from '../components/iconify';
 import { useAuth } from '../Auth'
 // sections
 import { RegisterForm } from '../sections/auth/login';
+import foto from '../fb.jpg'
 
 // ----------------------------------------------------------------------
 
@@ -65,6 +68,17 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [titulo, setTitulo] = useState('');
   const [experiencia, setExperiencia] = useState('');
+
+
+  const [cambioLogo, setCambioLogo] = useState(false);
+  const [logo, setLogo] = useState();
+  const handleLogoChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile){
+      setLogo(selectedFile);
+      setCambioLogo(true);
+    }
+  };
 
 
   const handleClick2 = () => {
@@ -139,6 +153,8 @@ export default function RegisterPage() {
            
            
            </>):(<>
+
+
            
             <Typography variant="h3" gutterBottom>
             Experiencia
@@ -148,10 +164,91 @@ export default function RegisterPage() {
                 Por favor, completá los datos con tu información profesional.
             </Typography>
             <Stack spacing={1}>
+
+
+                 
+
+
+
+
+
+
+
+
+
+
+
             <TextField name="titulo" label="Título" value={titulo}
             onChange={(e) => setTitulo(e.target.value)}/>
             <TextField name="experiencia" label="Experiencia" value={experiencia}
             onChange={(e) => setExperiencia(e.target.value)} multiline rows={5}/>
+
+
+
+
+<Card sx={{mb:4,mr:3, ml:6, backgroundColor:'transparent',}}>
+            <CardContent>
+              <Box
+                sx={{
+                  alignItems: 'center',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}
+              >
+                <Avatar
+                    src={logo ? URL.createObjectURL(logo) : foto}
+                    sx={{
+                      height: 40,
+                      mb: 1,
+                      width: 40
+                    }}
+                    style={{ width: 80, height: 80 }}
+                  />
+                
+                
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                >
+                
+                      {nombre}
+                
+          
+                </Typography>
+                <Typography
+                  color="text.secondary"
+                  variant="body2"
+                >
+                  {correo}
+                </Typography>
+
+              </Box>
+            </CardContent>
+            <Divider />
+            <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+
+            <label htmlFor="fileInput" >
+                    <input
+                    type="file"
+                    accept="image/*" 
+                    style={{ display: 'none' }}
+                    onChange={handleLogoChange}
+                    id="fileInput"
+                  />
+              <Button
+                fullWidth
+                variant="text"
+                color='secondary'
+                component="span"
+              >
+                Subir foto de usuario
+              </Button></label>
+
+
+
+
+            </CardActions>
+          </Card>
             
           </Stack>
 
