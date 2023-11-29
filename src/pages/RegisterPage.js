@@ -8,7 +8,7 @@ import { Link, Container, Typography, Divider, Stack, Button,
   InputAdornment,TextField,IconButton,CardActions,Card,Avatar,
   CardContent,Box
   } from '@mui/material';
-
+  import axios from 'axios';
   import { LoadingButton } from '@mui/lab';
 // hooks
 import useResponsive from '../hooks/useResponsive';
@@ -82,6 +82,10 @@ export default function RegisterPage() {
 
 
   const handleClick2 = () => {
+    if (!validateFields()) {
+      alert('Por favor, completá los campos obligatorios.');
+      return;
+    }
     setBool(false);
 
   };
@@ -90,6 +94,91 @@ export default function RegisterPage() {
     navigate('/dashboard');
     setAuth(true);
   }
+
+  const validateFields = () => {
+    if (
+      nombre.trim() === '' ||
+      correo.trim() === '' ||
+      telefono.trim() === '' ||
+      password.trim() === ''
+    ) {
+      return false; 
+    }
+    return true; 
+  };
+
+  const validateFields2 = () => {
+    if (
+      titulo.trim() === '' ||
+      experiencia.trim() === '' ||
+      logo === null
+    ) {
+      return false; 
+    }
+    return true; 
+  };
+
+  
+
+  const handleRegisterBack = async () => {
+
+
+    if (!validateFields2()) {
+      alert('Por favor, completá los campos obligatorios.');
+      return;
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data', 
+      },
+    };
+
+
+    const formData = new FormData();
+
+    formData.append('name', nombre);
+    formData.append('email', correo);
+    formData.append('password', password);
+    formData.append('telefono', telefono);
+    formData.append('titulo', titulo);
+    formData.append('experiencia', experiencia);
+
+    if (cambioLogo){
+      formData.append('file', logo);
+    } else {
+      const blob = await fetch(foto).then((r) => r.blob()); 
+      const file = new File([blob], 'myImage.jpg'); 
+      formData.append('file', file);
+    }
+
+    try {
+      const response = await axios.post(
+        "https://back-neilo-production.up.railway.app/api/users/registration",
+        formData,
+        config
+      );
+
+      const token = response.data.createdUser;
+
+      if (token){
+        document.cookie = `jwtToken=${token}; path=/; SameSite=Strict;`;
+
+        navigate('/dashboard/mispublicaciones', { replace: true });
+        setAuth(true);
+
+      } else {
+        alert('Por favor, verifica los campos ingresados.');
+      }
+
+    } catch (error) {
+      console.error("Error de registro", error);
+      alert('Ocurrió un error inesperado. No se pudo completar la creación del evento.');
+    }
+
+
+
+  }; 
 
   return (
     <>
@@ -127,7 +216,7 @@ export default function RegisterPage() {
             onChange={(e) => setNombre(e.target.value)}/>
             <TextField name="mail" label="Correo Electrónico" value={correo}
             onChange={(e) => setCorreo(e.target.value)}/>
-            <TextField name="telefono" label="Teléfono" value={telefono}
+            <TextField name="telefono" label="Teléfono" value={telefono} type="number"
             onChange={(e) => setTelefono(e.target.value)}/>
             <TextField
               name="Contraseña"
@@ -252,7 +341,7 @@ export default function RegisterPage() {
             
           </Stack>
 
-          <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick3} sx={{mt:3}}>
+          <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleRegisterBack} sx={{mt:3}}>
             Registrarme
           </LoadingButton>
            

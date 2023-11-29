@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
+import axios from 'axios';
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Typography, Container } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
@@ -29,6 +30,44 @@ export default function LoginForm() {
 
   const handleClick2 = () => {
     navigate('/recupero');
+  }
+
+  const validateFields = () => {
+    if (
+      email.trim() === '' ||
+      password.trim() === ''
+
+    ) {
+      return false; 
+    }
+    return true; 
+  };
+
+  const handleLogin = async () => {
+
+    
+    if (!validateFields()) {
+      alert('Por favor, complete los campos obligatorios.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('https://back-neilo-production.up.railway.app/api/users/login/', {
+        email,
+        password,
+      });
+
+      const token = response.data.loginUser;
+
+      if (token){
+        document.cookie = `jwtToken=${token}; path=/; SameSite=Strict;`;
+        setAuth(true);
+        navigate('/dashboard/app');
+      } 
+
+    } catch (error) {
+      alert("Por favor, verifica los datos ingresados")
+    }
   }
 
   return (
@@ -65,7 +104,7 @@ export default function LoginForm() {
         </Link>
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
+      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleLogin}>
         Iniciar Sesión
       </LoadingButton>
     </>
