@@ -2,6 +2,7 @@ import {useState} from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Navigate, useNavigate,  } from 'react-router-dom';
 // @mui
+import axios from 'axios';
 import { styled } from '@mui/material/styles';
 import { Link, Container, Typography, Divider, Stack, Button, TextField } from '@mui/material';
 // hooks
@@ -65,14 +66,41 @@ export default function LoginPage() {
   const [correo, setCorreo] = useState('');
 
   const handleClick = () => {
-        setState(false);
+
+    if (correo.trim() === '') {
+      alert('Por favor, completá el correo.');
+      return;
+    }
+    const mail = correo;
+    try {
+      axios.post('https://back-neilo-production.up.railway.app/api/users/enviarmail', {
+        mail, 
+      });
+
+      setState(false);
+
+    } catch (error) {
+      
+      alert("Por favor, verifica los datos ingresados")
+    }
   }
+    
+  
+
+
   const handleClick2 = () => {
     navigate('/dashboard/app');
 }
-const handleClick3 = () => {
+
+const handleClick3 = async () => {
   navigate('/login');
+
 }
+
+
+
+
+
 
   return (
     <>

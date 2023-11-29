@@ -18,6 +18,7 @@ import ExpPage from './pages/ExpPage';
 import RecoverPage from './pages/RecoverPage';
 import ContratarPage from './pages/ContratarPage';
 import CrearServicioPage from './pages/CrearServicioPage';
+import CambiarContraPage from './pages/CambiarContraPage';
 
 
 
@@ -48,6 +49,7 @@ export default function Router() {
     {path: 'register', element: <RegisterPage />,},
     {path: 'experiencia', element: <ExpPage />,},
     {path: 'recupero', element: <RecoverPage />,},
+    {path: 'cambiarcontra/:idUser', element: <CambiarContraPage />,},
     
     {
       element: <SimpleLayout />,
