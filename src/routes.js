@@ -49,7 +49,7 @@ export default function Router() {
     {path: 'register', element: <RegisterPage />,},
     {path: 'experiencia', element: <ExpPage />,},
     {path: 'recupero', element: <RecoverPage />,},
-    {path: 'cambiarcontra/:idUser', element: <CambiarContraPage />,},
+    {path: 'actualizar/:idUser', element: <CambiarContraPage />,},
     
     {
       element: <SimpleLayout />,
