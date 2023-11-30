@@ -1,8 +1,11 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+
+import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 // @mui
 import {
   Card,
@@ -30,7 +33,7 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
+
 
 // ----------------------------------------------------------------------
 
@@ -69,12 +72,57 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.titulo.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 export default function UserPage() {
+
+  const [USERLIST, setUSERLIST] = useState([]);
+
+
+  useEffect(() => {
+    handleLogin();
+  }, []);
+
+  function getJwtToken() {
+    const jwtCookie = document.cookie.split('; ').find(row => row.startsWith('jwtToken='));
+    return jwtCookie ? jwtCookie.split('=')[1] : null;
+  }
+
+  const cookieValue = getJwtToken();
+
+  const handleLogin = async () => {
+
+    const config = {
+      headers: {
+        'x-access-token': `${cookieValue}`,
+        'Content-Type': 'multipart/form-data', // Importante para indicar que estás enviando un formulario con datos binarios (archivos)
+      },
+    };
+
+    const id = decodedToken.id
+
+
+    try {
+      const response = await axios.get(`https://back-neilo-production.up.railway.app/api/servicios/getserviciosdash?id=${id}`, config);
+      
+      // Crea el token
+      const aux = response.data.data;
+      setUSERLIST(aux);
+
+    } catch (error) {
+      console.error('Error de carga de servicios', error);
+    }
+
+
+  };
+
+  USERLIST.map((item) => {
+    return null; // El valor de retorno no es importante en este caso
+  });
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -94,13 +142,16 @@ export default function UserPage() {
   const [categoria, setCategoria] = useState("");
   const [duracion, setDuracion] = useState("");
   const [frecuencia, setFrecuencia] = useState("");
+  const [tipo, setTipo] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [costo, setCosto] = useState("");
+  const [estado, setEstado] = useState("");
   const [openModal2, setOpenModal2] = useState(false);
   const [file, setFile] = useState(null);
 
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = (event,id) => {
     setOpen(event.currentTarget);
+    setidEvento(id);
   };
 
   const handleCloseMenu = () => {
@@ -113,6 +164,7 @@ export default function UserPage() {
     setCategoria('');
     setDuracion('');
     setFrecuencia('');
+    setTipo('');
     setDescripcion('');
     setCosto('');
   };
@@ -129,7 +181,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = USERLIST.map((n) => n.titulo);
       setSelected(newSelecteds);
       return;
     }
@@ -194,14 +246,131 @@ export default function UserPage() {
     setFile(selectedFile);
   };
 
+
+
+  const [idEvento, setidEvento] = useState("");
+
   const handleModificarServicio = () => { 
     setOpenModal2(true);
     setOpen(null);
-  }
+    
+    const aux = USERLIST.find(item => item._id === idEvento);
+    console.log(aux);
 
-  const handleBackendPublicar = () => { 
+    setNombre(aux.titulo);
+    setCategoria(aux.categoria);
+    setFrecuencia(aux.frecuencia);
+    setTipo(aux.tipo);
+    
+    setDescripcion(aux.descripcion)
+    setCosto(aux.costo)
+    setDuracion(aux.duracion)
+    setEstado(aux.estado)
+
+  };
+
+  const validateFields = () => {
+    if (
+      nombre.trim() === '' ||
+      categoria.trim() === '' ||
+      duracion.trim() === '' ||
+      frecuencia.trim() === '' ||
+      descripcion.trim() === '' ||
+      tipo.trim() === '' ||
+      costo.trim() === '' 
+    ) {
+      return false; 
+    }
+    return true; 
+  };
+
+  const handleBackendModificar = async () => {
     setOpenModal2(false);
-  }
+    
+    if (!validateFields()) {
+      alert('Por favor, complete los campos obligatorios.');
+      return;
+    }
+    
+
+    const config = {
+      headers: {
+        'x-access-token': `${cookieValue}`,
+        'Content-Type': 'multipart/form-data', // Importante para indicar que estás enviando un formulario con datos binarios (archivos)
+      },
+    };
+
+    console.log('id', idEvento);
+    console.log('titulo', nombre);
+    console.log('descripcion', descripcion);
+    console.log('frecuencia', frecuencia);
+    console.log('duracion', duracion);
+    console.log('tipo', tipo);
+    console.log('costo', costo.toString());
+    console.log('estado', estado); 
+    console.log('categoria', categoria);
+    
+    const formData = new FormData();
+    formData.append('id', idEvento);
+    formData.append('titulo', nombre);
+    formData.append('descripcion', descripcion);
+    formData.append('frecuencia', frecuencia);
+    formData.append('duracion', duracion);
+    formData.append('tipo', tipo);
+    formData.append('costo', costo.toString());
+    formData.append('estado', estado); 
+    formData.append('categoria', categoria);
+
+    if (file!=null){
+       formData.append('file', file); 
+    }
+
+
+    try {
+      await axios.put(
+        "https://back-neilo-production.up.railway.app/api/servicios/modificar",
+        formData,
+        config
+      );
+
+      window.location.reload();
+
+    } catch (error) {
+      console.error("Error de registro", error);
+      alert('Ocurrió un error inesperado. No se pudo completar la creación del evento.');
+    }
+
+  };
+
+
+  const handleEliminarBack = async () => { 
+
+    try {
+      
+      await axios.delete('https://back-neilo-production.up.railway.app/api/servicios/borrar', {
+        headers: {
+          'x-access-token': `${cookieValue}`,
+        },
+        data: {
+          id: idEvento
+        }
+      });
+
+      window.location.reload();
+
+    } catch (error) {
+      alert('Ocurrió un error inesperado. No se puedo eliminar el evento.');
+    }
+    setOpenModal3(false);
+
+  };
+
+
+  
+  const jwtToken = getJwtToken();
+  const decodedToken = jwtDecode(jwtToken);
+  
+
 
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -242,19 +411,19 @@ export default function UserPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, servicio, duracion, frecuencia, costo, estado } = row;
-                    const selectedUser = selected.indexOf(servicio) !== -1;
+                  {USERLIST.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                    const { _id, titulo, duracion, frecuencia, costo, estado } = row;
+                    const selectedUser = selected.indexOf(titulo) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox"/>
                           
                         
 
                         
 
-                        <TableCell align="left">{servicio}</TableCell>
+                        <TableCell align="left">{titulo}</TableCell>
                         <TableCell align="left">{duracion}</TableCell>
                         <TableCell align="left">{frecuencia}</TableCell>
                         <TableCell align="left">{costo}</TableCell>
@@ -264,7 +433,7 @@ export default function UserPage() {
                         </TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, _id)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -381,7 +550,7 @@ export default function UserPage() {
 
           <Box backgroundColor='white'>
             <Grid align="center">
-              <Button variant="contained" size="large" color="primary" onClick={''}>Eliminar</Button>
+              <Button variant="contained" size="large" color="primary" onClick={handleEliminarBack}>Eliminar</Button>
               <Button sx= {{ml: 3}} variant="outlined" size="large" color="primary" onClick={handleCloseModal3}>Volver atrás</Button>
             </Grid>
           </Box>
@@ -454,12 +623,12 @@ export default function UserPage() {
           <Box mt={1} mb={2} backgroundColor='white' align='center'>
             <Typography variant="h4" gutterBottom>
 
-              <strong>Modificar Evento</strong>
+              <strong>Modificar Servicio</strong>
             </Typography>
           </Box>
 
           <Stack spacing={2}>
-      <TextField name="Nombre del servicio" label="Nombre del servicio" value={nombre}
+      <TextField name="Nombre del servicio" label="Nombre del servicio" value={nombre} size="small"
           onChange={(e) => setNombre(e.target.value)}/>
       <Box sx={{ minWidth: 120, }}>
 
@@ -474,6 +643,7 @@ export default function UserPage() {
           label="Categoria"
           MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
           value={categoria}
+          size="small"
           onChange={(e) => setCategoria(e.target.value)}
         >
         <MenuItem value="Idiomas">Idiomas</MenuItem>
@@ -498,6 +668,7 @@ export default function UserPage() {
           id="duracion"
           label="Duracion"
           value={duracion}
+          size="small"
           onChange={(e) => setDuracion(e.target.value)}
         >
          <MenuItem value="30 Minutos">30 Minutos</MenuItem>
@@ -517,6 +688,7 @@ export default function UserPage() {
           id="frecuencia"
           label="Frecuencia"
           value={frecuencia}
+          size="small"
           onChange={(e) => setFrecuencia(e.target.value)}
         >
          <MenuItem value="Única">Única</MenuItem>
@@ -526,9 +698,27 @@ export default function UserPage() {
       </FormControl>
     </Box>
 
-        <TextField name="descripcion" label="Descripcion" multiline rows={3} value={descripcion}
+    <Box sx={{ minWidth: 120}}>
+      <FormControl fullWidth>
+        <InputLabel id="tipo">Tipo</InputLabel>
+        <Select
+          labelId="tipo"
+          id="tipo"
+          label="Tipo"
+          value={tipo}
+          size="small"
+          onChange={(e) => setTipo(e.target.value)}
+        >
+         <MenuItem value="Individual">Individual</MenuItem>
+         <MenuItem value="Grupal">Grupal</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
+
+        <TextField name="descripcion" label="Descripcion" multiline rows={3} value={descripcion} size="small"
           onChange={(e) => setDescripcion(e.target.value)}/>
-        <TextField name="costo" label="Costo (USD)" type="number" value={costo}
+          
+        <TextField name="costo" label="Costo (USD)" type="number" value={costo} size="small"
           onChange={(e) => setCosto(e.target.value)}/>
         
       </Stack>
@@ -573,7 +763,7 @@ export default function UserPage() {
               
                 color="primary"
                 startIcon={<Iconify icon="ic:baseline-plus" />}
-                onClick={handleBackendPublicar}
+                onClick={handleBackendModificar}
               
               >
                 Guardar cambios
