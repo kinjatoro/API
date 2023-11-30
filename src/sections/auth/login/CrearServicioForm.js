@@ -65,7 +65,7 @@ export default function CrearServicioForm() {
   const cookieValue = getJwtToken();
 
   const decodedToken = jwtDecode(cookieValue);
-  const id = decodedToken.data.id
+  const id = decodedToken.id
 
   const handleRegisterBack = async () => {
 
@@ -82,24 +82,30 @@ export default function CrearServicioForm() {
       },
     };
 
+
+
+  
     const formData = new FormData();
     formData.append('userid', id);
     formData.append('titulo', nombre);
     formData.append('descripcion', descripcion);
     formData.append('frecuencia', frecuencia);
     formData.append('duracion', duracion);
-    formData.append('costo', costo);
-    formData.append('estado', banner); 
+    formData.append('costo', costo.toString());
+    formData.append('estado', 'Publicado'); 
     formData.append('file', banner);
     formData.append('tipo', tipo);
     formData.append('categoria', categoria);
 
+
     try {
+
       const response = await axios.post(
         "https://back-neilo-production.up.railway.app/api/servicios/publicar",
         formData,
         config
       );
+
       const token = response.data.createdServicio;
 
       if (token){
@@ -183,8 +189,8 @@ export default function CrearServicioForm() {
           value={tipo}
           onChange={(e) => setTipo(e.target.value)}
         >
-         <MenuItem value="individual">Individual</MenuItem>
-         <MenuItem value="grupal">Grupal</MenuItem>
+         <MenuItem value="Individual">Individual</MenuItem>
+         <MenuItem value="Grupal">Grupal</MenuItem>
 
         </Select>
       </FormControl>
