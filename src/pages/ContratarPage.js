@@ -159,6 +159,18 @@ export default function RegisterPage() {
 
       <StyledRoot>
 
+      {mdUp && (
+          <StyledSection>
+            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}/>
+            
+            <img
+              src="/assets/illustrations/character_7.png"
+              alt="register"
+              style={{ transform: 'scaleX(-1)' }}
+            />
+          </StyledSection>
+        )}
+
         <Container maxWidth="sm">
           <StyledContent>
           {(state ? (<>
@@ -184,11 +196,11 @@ export default function RegisterPage() {
       </Button></>
       ):(
       <>
-      <Stack spacing={2} sx={{ p: 25, px: 3 , alignItems: "center"}}>
-        <Typography align="center" variant="h5">
+      <Stack spacing={2} sx={{ p: 20, px: 3 , alignItems: "center"}}>
+        <Typography align="center" variant="h3">
           El profesor próximamente se pondrá en contacto con vos. ¡Gracias por usar Neilo! 
         </Typography>
-        <Button  variant="outlined" sx={{width:"50%"}} onClick={handleClick2} >Ver más servicios</Button>
+        <Button  variant="outlined" sx={{width:"50%"}} onClick={handleClick2} size="large" >Ver más servicios</Button>
       </Stack>
       </>))}
 
