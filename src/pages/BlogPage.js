@@ -263,24 +263,7 @@ export default function BlogPage() {
                     </MenuItem>
                   
 
-                    <MenuItem
-                      key={"mayor precio"}
-                      selected={"mayor precio" === 'newest'}
-                      onClick={handleMayorPrecio}
-                      sx={{ typography: 'body2' }}
-                    >
-                      {"Mayor precio"}
-                    </MenuItem>
 
-
-                    <MenuItem
-                      key={"menor precio"}
-                      selected={"menor precio" === 'newest'}
-                      onClick={handleMenorPrecio}
-                      sx={{ typography: 'body2' }}
-                    >
-                      {"Menor precio"}
-                    </MenuItem>
 
 
 
