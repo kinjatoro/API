@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
+import { filter,sample } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -106,7 +106,13 @@ export default function UserPage() {
       
       // Crea el token
       const aux = response.data.data;
-      setUSERLIST(aux);
+
+      const updatedJsons = aux.map((json, index) => ({
+        ...json,
+        avatarSrc: `/assets/images/avatars/avatar_${index + 1}.jpg`
+      }));
+
+      setUSERLIST(updatedJsons);
 
     } catch (error) {
       console.error('Error de carga de contratos', error);
@@ -237,6 +243,12 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+
+  const avatarList = Array.from({ length: 24 }, (_, index) => `/assets/images/avatars/avatar_${index + 1}.jpg`);
+  const generateRandomAvatar = () => {
+    return sample(avatarList); // Utiliza lodash.sample para obtener una ruta aleatoria de la lista
+  };
+
   return (
     <>
       <Helmet>
@@ -267,7 +279,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { _id, userid,alumno, mensaje } = row;
+                    const { _id, userid,alumno, mensaje,avatarSrc } = row;
                     const selectedUser = selected.indexOf(alumno) !== -1;
 
                     return (
@@ -276,7 +288,7 @@ export default function UserPage() {
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={alumno} src={`/assets/images/avatars/avatar_${Math.floor(Math.random() * 24) + 1}.jpg`} />
+                            <Avatar alt={alumno} src={avatarSrc} />
                             <Typography variant="subtitle2" noWrap>
                               {alumno}
                             </Typography>
