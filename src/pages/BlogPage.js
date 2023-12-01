@@ -68,8 +68,11 @@ export default function BlogPage() {
       const response = await axios.get(newURL); // Usa la nueva URL
 
       const aux = response.data.data;
-      setPOSTS(aux);
-      setFilteredBlog(aux);
+
+      const aceptados = aux.filter((servicio) => servicio.estado === "Publicado");
+
+      setPOSTS(aceptados);
+      setFilteredBlog(aceptados);
     
     } catch (error) {
       console.error('Ocurrió un error al intentar cargar los posts', error);
