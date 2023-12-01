@@ -196,11 +196,23 @@ export default function RegisterPage() {
         />
 
         
+      {mdUp && (
+          <StyledSection>
+            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
+              ¡Bienvenido!
+            </Typography>
+            <img
+              src="/assets/illustrations/illustration_login.png"
+              alt="register"
+              style={{ transform: 'scaleX(-1)' }}
+            />
+          </StyledSection>
+        )}
+
+
 
         <Container maxWidth="sm">
           <StyledContent>
-
-
           {bool ? (<>
             <Typography variant="h3" gutterBottom>
               Registrarse

@@ -132,6 +132,18 @@ const handleClick3 = async () => {
           }}
         />
 
+{mdUp && (
+          <StyledSection>
+            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}/>
+
+            <img
+              src="/assets/illustrations/character_7.png"
+              alt="register"
+              style={{ transform: 'scaleX(-1)' }}
+            />
+          </StyledSection>
+        )}
+
         
        { (state ? (<><Container maxWidth="sm">
           <StyledContent>

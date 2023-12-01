@@ -142,6 +142,8 @@ export default function DashboardAppPage() {
         
         <Box sx={{m: 50}} />
 
+        
+
         <Grid sx={{display: "flex",flexDirection: 'column', alignItems: 'center', justifyContent: "center", my:30}}>
         <Typography variant="h2"  align = 'center'>
         ¿Estás listo para empezar?

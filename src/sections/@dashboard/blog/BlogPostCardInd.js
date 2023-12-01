@@ -169,7 +169,7 @@ export default function BlogPostCardInd({ post, index, usuario, banner, title })
               {name} </Box>
           </StyledTitle>
           
-          <Typography sx={{textAlign: "justify", mt:-1}}>{experiencia}. Título: {titulo}</Typography>
+          <Typography sx={{textAlign: "justify", mt:-1}}>{experiencia}- Título: {titulo}</Typography>
           <Box sx={{borderTop: '1px solid #f0f0f0', mt:2}}> </Box>
           
           <Typography sx={{textAlign: "justify", mt:2}}>{descripcion}</Typography>

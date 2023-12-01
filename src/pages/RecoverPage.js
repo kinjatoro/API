@@ -117,6 +117,13 @@ const handleClick3 = async () => {
           }}
         />
 
+      {mdUp && (
+          <StyledSection>
+
+            <img src="/assets/illustrations/626bdb579a74b187c17b5cd2_illustration_coming_soon.svg" alt="login" />
+          </StyledSection>
+        )}
+
         
        { (state ? (<><Container maxWidth="sm">
           <StyledContent>
