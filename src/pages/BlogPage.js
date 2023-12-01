@@ -23,7 +23,7 @@ export default function BlogPage() {
 
   
 
-  const FILTER_CATEGORIA_OPTIONS = ['Matemática', 'Música', 'Química', 'Historia', 'Geografía', 'Inglés', 'Programación' ];
+  const FILTER_CATEGORIA_OPTIONS = ["Idiomas","Deportes","Música","Arte","Baile","Apoyo Escolar","Apoyo Universitario","Cocina","Otros"];
   const FILTER_TIPOCLASE_OPTIONS = ['Individual', 'Grupal'];
   const FILTER_RATING_OPTIONS = ['5 estrellas', '4 estrellas', '3 estrellas', '2 estrellas', '1 estrella'];
   const FILTER_FRECUENCIA_OPTIONS = ['Única', 'Semanal', 'Mensual'];
