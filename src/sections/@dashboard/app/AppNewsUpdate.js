@@ -3,7 +3,10 @@ import {useState} from 'react';
 import PropTypes from 'prop-types';
 import { Box, Stack, Link, Card, Button, Divider, Typography, CardHeader, TextField, MenuItem,Select,FormControl,InputLabel  } from '@mui/material';
 // utils
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import { fToNow } from '../../../utils/formatTime';
+
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
@@ -22,11 +25,64 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
   const { auth, setAuth } = useAuth();
   const [name, setName] = useState('');
   const [text, setText] = useState('');
-  const [rating, setRating] = useState('');
+  const [rating, setRating] = useState('5');
 
-  const handleClick = () => {
-    setState(false);
-}
+  const { idBlog } = useParams();
+  const id = String(idBlog); 
+
+
+  const handleClick = async () => {
+
+    if (name.trim() === '') {
+      alert('El nombre no puede quedar vacío');
+      return;
+    }
+    if (text.trim() === '') {
+      alert('No se puede publicar un comentario vacío');
+      return;
+    }
+    if (rating.trim() === '') {
+      alert('El rating no puede quedar vacío');
+      return;
+    }
+
+    try {
+
+      const response = await axios.get(`https://back-neilo-production.up.railway.app/api/servicios/getserviciosgen?id=${id}`);
+      const aux = response.data.data;
+
+      console.log('userid', aux[0].userid)
+      console.log('serviceid', id)
+      console.log('nombreservicio', aux[0].titulo)
+      console.log('alumno', name)
+      console.log('texto', text)
+      console.log('titulo', aux[0].titulo)
+      console.log('calificacion', rating)
+      console.log('estado', 'Rechazado')
+
+      await axios.post(
+        "https://back-neilo-production.up.railway.app/api/comentarios/publicar",{
+          userid: aux[0].userid,
+          serviceid: id,
+          nombreservicio: aux[0].titulo,
+          alumno: name,
+          texto: text,
+          titulo: aux[0].titulo,
+          calificacion: rating,
+          estado: 'Rechazado'
+        }
+        
+      );
+
+      setState(false);
+
+    } catch (error) {
+      console.log(error)
+      alert("Por favor, verifica los datos ingresados")
+    }
+    
+    
+  }
 
   return (
     <Card {...other}>
@@ -92,33 +148,36 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
 
 NewsItem.propTypes = {
   news: PropTypes.shape({
-    description: PropTypes.string,
-    image: PropTypes.string,
-    postedAt: PropTypes.instanceOf(Date),
-    title: PropTypes.string,
+    alumno: PropTypes.string,
+    texto: PropTypes.string,
+    calificacion: PropTypes.number,
   }),
 };
 
 function NewsItem({ news }) {
-  const { image, title, description, postedAt } = news;
+  const { alumno, texto, calificacion } = news;
 
   return (
     <Stack direction="row" alignItems="center" spacing={2} sx={{borderTop: '1px solid #f0f0f0', }}>
-      <Box component="img" alt={title} src={image} sx={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
+      <Box component="img" alt={''} src={''} sx={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
 
       <Box sx={{ minWidth: 240, flexGrow: 1 }}>
         <Link color="inherit" variant="subtitle2" underline="hover" noWrap>
-          {title}
+          {alumno}
         </Link>
 
         <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: "justify", pr:2 }}>
-          {description}
+          {texto}
         </Typography>
       </Box>
 
-      <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
-        {fToNow(postedAt)}
-      </Typography>
+      <Stack sx={{color: 'grey.500', pr:3}} alignItems="center">
+          <Typography sx={{alignItems: "center",display: 'flex'}}><Iconify sx={{mt:-0.35, mr:0.5}}  icon="solar:star-bold" />
+
+          {calificacion}
+          
+          </Typography>
+          </Stack>
     </Stack>
   );
 }

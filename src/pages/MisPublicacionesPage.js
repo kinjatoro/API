@@ -226,7 +226,6 @@ export default function UserPage() {
   const handleEliminar = () => { 
     setOpenModal3(true);
     setOpen(null);
-    
   };
 
   const maxFileNameLength = 40;
@@ -254,6 +253,11 @@ export default function UserPage() {
     setOpenModal2(true);
     setOpen(null);
     
+    handlePisarDatos();
+
+  };
+
+  const handlePisarDatos = () => {
     const aux = USERLIST.find(item => item._id === idEvento);
     console.log(aux);
 
@@ -266,8 +270,7 @@ export default function UserPage() {
     setCosto(aux.costo)
     setDuracion(aux.duracion)
     setEstado(aux.estado)
-
-  };
+  }
 
   const validateFields = () => {
     if (
@@ -365,6 +368,7 @@ export default function UserPage() {
 
   };
 
+  
 
   
   const jwtToken = getJwtToken();
@@ -508,16 +512,6 @@ export default function UserPage() {
         <MenuItem onClick={handleModificarServicio}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Editar
-        </MenuItem>
-
-        <MenuItem>
-          <Iconify icon={'eva:pause-circle-outline'} sx={{ mr: 2 }} />
-          Pausar
-        </MenuItem>
-
-        <MenuItem>
-          <Iconify icon={'eva:play-circle-outline'} sx={{ mr: 2 }} />
-          Despausar
         </MenuItem>
 
         <MenuItem onClick={handleEliminar} sx={{ color: 'error.main' }}>
@@ -698,6 +692,8 @@ export default function UserPage() {
       </FormControl>
     </Box>
 
+
+
     <Box sx={{ minWidth: 120}}>
       <FormControl fullWidth>
         <InputLabel id="tipo">Tipo</InputLabel>
@@ -715,11 +711,29 @@ export default function UserPage() {
       </FormControl>
     </Box>
 
-        <TextField name="descripcion" label="Descripcion" multiline rows={3} value={descripcion} size="small"
+        <TextField name="descripcion" label="Descripcion" multiline rows={2} value={descripcion} size="small"
           onChange={(e) => setDescripcion(e.target.value)}/>
           
         <TextField name="costo" label="Costo (USD)" type="number" value={costo} size="small"
           onChange={(e) => setCosto(e.target.value)}/>
+
+
+<Box sx={{ minWidth: 120}}>
+      <FormControl fullWidth>
+        <InputLabel id="estado">Estado</InputLabel>
+        <Select
+          labelId="estado"
+          id="estado"
+          label="Estado"
+          value={estado}
+          size="small"
+          onChange={(e) => setEstado(e.target.value)}
+        >
+         <MenuItem value="Pausado">Pausado</MenuItem>
+         <MenuItem value="Publicado">Publicado</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
         
       </Stack>
 

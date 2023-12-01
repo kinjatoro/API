@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
 import { Box, Link, Card, Grid, Avatar, Typography, CardContent,Button,Stack,Chip } from '@mui/material';
+import axios from 'axios';
 // utils
 import { fDate } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
+
 //
 import SvgColor from '../../../components/svg-color';
 import Iconify from '../../../components/iconify';
@@ -59,22 +62,39 @@ BlogPostCard.propTypes = {
 };
 
 export default function BlogPostCard({ post, index }) {
-  const { cover, title, view, price, share,stars, author, createdAt } = post;
+  const { _id, userid, titulo, descripcion, categoria,frecuencia, duracion, tipo,costo,rating,estado,comentarios,imagen,total } = post;
   const latestPostLarge = index === 500;
   const latestPost = index === 501 || index === 502;
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    handleLogin();
+  }, []);
+
+
+  const handleLogin = async () => {
+
+    try {
+      const response = await axios.get(`https://back-neilo-production.up.railway.app/api/users/getuser?id=${userid}`);
+      const aux = response.data.data;
+      setUser(aux[0]);
+    } catch (e){
+      console.error('Ocurrió un error al intentar cargar los posts', e);
+    }
+  }
+
+  
 
   const POST_INFO = [
-    { string: share, icon: 'mdi:clock' },
-    { string: view, icon: 'solar:calendar-bold-duotone' },
-    { string: stars, icon: 'solar:star-bold' },
-    
-    
+    { string: duracion === '30 Minutos' ? '30 Min.' : duracion, icon: 'mdi:clock' },
+    { string: frecuencia, icon: 'solar:calendar-bold-duotone' },
+    { string: rating.toString().slice(0, 4), icon: 'solar:star-bold' },
   ];
 
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/dashboard/individualblog/${post.id}`);
+    navigate(`/dashboard/individualblog/${post._id}`);
   };
 
   return (
@@ -115,8 +135,8 @@ export default function BlogPostCard({ post, index }) {
             }}
           />
           <StyledAvatar
-            alt={author.name}
-            src={author.avatarUrl}
+            alt={user?.imagen ? user.imagen : 'Imagen del usuario'}
+            src={user?.imagen ? user.imagen : 'Imagen del usuario'}
             sx={{
               ...((latestPostLarge || latestPost) && {
                 zIndex: 9,
@@ -128,7 +148,7 @@ export default function BlogPostCard({ post, index }) {
             }}
           />
 
-          <StyledCover alt={title} src={cover} />
+          <StyledCover alt={imagen} src={imagen} />
         </StyledCardMedia>
 
         <CardContent
@@ -143,7 +163,7 @@ export default function BlogPostCard({ post, index }) {
         >
           
           <Typography  gutterBottom variant="h6" sx={{ color: 'black', mt: -1 }}>
-            {title}            
+            {titulo}            
            </Typography>
           
 
@@ -161,7 +181,7 @@ export default function BlogPostCard({ post, index }) {
 
             
               <Typography>
-               {author.name} 
+               {user?.name ? user.name : ' '} 
                </Typography>
             
           </StyledTitle>
@@ -192,7 +212,7 @@ export default function BlogPostCard({ post, index }) {
             
           </StyledInfo>
           <Stack sx={{alignItems: "center",  display: 'flex', flexDirection: "row", justifyContent:"space-between", mt: 2 }}> 
-          <Typography variant="h5">{price}</Typography>
+          <Typography variant="h5">{`$${costo}`}</Typography>
           <Button onClick={handleClick} variant="outlined">Ver más</Button>
           </Stack>
         </CardContent>

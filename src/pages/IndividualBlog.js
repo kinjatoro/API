@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { sample } from 'lodash';
 import { useParams } from 'react-router-dom';
 
@@ -7,12 +7,15 @@ import { Helmet } from 'react-helmet-async';
 // @mui
 import { Grid, Button, Container, Stack, Typography, Box } from '@mui/material';
 
+import axios from 'axios';
+
 import { ProductSort} from '../sections/@dashboard/products';
 
 // components
 import Iconify from '../components/iconify';
 
-import {BlogPostCardInd} from '../sections/@dashboard/blog';
+import BlogPostCardInd from '../sections/@dashboard/blog/BlogPostCardInd';
+
 // mock
 import POSTS from '../_mock/blog';
 
@@ -25,7 +28,9 @@ import {AppNewsUpdate} from '../sections/@dashboard/app';
 export default function BlogPage() {
   const [openFilter, setOpenFilter] = useState(false);
 
-  
+  const [GG, setGG] = useState(null);
+  const [UU, setUU] = useState(null);
+  const [comentarios, setComentarios] = useState(null);
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -35,56 +40,86 @@ export default function BlogPage() {
     setOpenFilter(false);
   };
 
-
-
   const { idBlog } = useParams();
-  const index = parseInt(idBlog, 10); 
-  const post = POSTS[index-1];
+  const id = String(idBlog);  
+
+  const handleLogin = async () => {
+    
+    try {
+      const response = await axios.get(`https://back-neilo-production.up.railway.app/api/servicios/getserviciosgen?id=${id}`);
+      const aux = response.data.data;
+      setGG(aux[0]);
+
+    
+      const response2 = await axios.get(`https://back-neilo-production.up.railway.app/api/users/getuser?id=${aux[0].userid}`);
+      const aux2 = response2.data.data;
+      setUU(aux2[0]);
+      console.log(aux2[0])
+
+      const response3 = await axios.get(`https://back-neilo-production.up.railway.app/api/comentarios/publicacion?id=${id}`);
+      const aux3 = response3.data.data;
+      const comentariosAceptados = aux3.filter((comentario) => comentario.estado === "Aceptado");
+
+      setComentarios(comentariosAceptados);
+
+    } catch (error) {
+      console.error('Ocurrió un error al intentar cargar los datos', error);
+    };
+
+  };
+
+  useEffect(() => {
+    handleLogin();
+  }, []);
+
+  useEffect(() => {
+    if (UU !== null) {
+      console.log('UU se actualizó:', UU);
+    }
+    if (comentarios !== null) {
+      console.log('Comentarios se actualizó:', comentarios);
+    }
+  }, [UU, comentarios]);
+  
+
+
+  if (!GG || !comentarios || !UU) {
+    return <div/>;
+  }
+  
   
   return (
 
   
     <>
       <Helmet>
-        <title> {post.title} </title>
+        <title> {GG.titulo} </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} mt={-4}>
           <Typography variant="h3" gutterBottom>
-          {post.title}
+          {GG.titulo}
           </Typography>
           
         </Stack>
-
+      <div>{console.log(UU)}</div>
         <Grid container spacing={3}>
-        
-            <BlogPostCardInd key={post.id} post={post} index={index} />
             
-        </Grid>
+            <BlogPostCardInd key={GG._id} post={GG} index={id} usuario={UU} banner={GG.imagen} title={GG.titulo}/>
+            
+        </Grid> 
+
+
         <Grid item xs={12} md={6} lg={8} >
             <AppNewsUpdate
               sx={{borderRadius: "0px"}}
               title="Agregar comentario"
-              list={[...Array(5)].map((_, index) => ({
-                id: index,
-                title: sample([ 'Ezequiel', 'Neistadt', 'Agustín', 'Carlos', 'Manuel', 'Juan','Esteban','Lucas','Fernando','Nicolás']),
-                description: sample([
-                  'No puedo expresar lo agradecido que estoy por el apoyo que he recibido de este servicio de clases particulares. Mi profesor ha demostrado una paciencia infinita al explicar conceptos difíciles y me ha dado la confianza necesaria para enfrentar mis exámenes con éxito. Las lecciones son personalizadas y adaptadas a mis necesidades específicas, lo cual ha marcado la diferencia en mi aprendizaje.',
-                  'Recomiendo este servicio a cualquiera que quiera aprender rápido.',
-                  'tipazo',
-                  'Primer comentario',
-                  'Segundo comentario!',
-                  'recomienzo 100%',
-                  'fue una experiencia fantástica. Explicó los conceptos de manera clara y siempre estuvo dispuesto a responder mis preguntas. Mi comprensión de las matemáticas mejoró significativamente gracias a él.',
-                  'Like si lo ves en 2023',
-                  'Si bien el profe tiene un profundo conocimiento de la historia, a veces las clases pueden volverse un poco demasiado densas. Sería útil si se proporcionaran resúmenes de las lecciones después de cada clase para ayudar en la retención de información.',
-                ]),
-                image:  `/assets/images/avatars/avatar_${index + 1}.jpg`,
-                postedAt: faker.date.recent(),
-              }))}
+              list={comentarios}
             />
-          </Grid>
+        </Grid> 
+
+
       </Container>
 
 

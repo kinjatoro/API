@@ -1,7 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 // @mui
 import {
   Card,
@@ -69,12 +71,56 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.alumno.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 export default function UserPage() {
+
+  const [USERLIST, setUSERLIST] = useState([]);
+
+
+  useEffect(() => {
+    handleLogin();
+  }, []);
+
+  function getJwtToken() {
+    const jwtCookie = document.cookie.split('; ').find(row => row.startsWith('jwtToken='));
+    return jwtCookie ? jwtCookie.split('=')[1] : null;
+  }
+
+  const cookieValue = getJwtToken();
+
+  const handleLogin = async () => {
+
+    const config = {
+      headers: {
+        'x-access-token': `${cookieValue}`,
+        'Content-Type': 'multipart/form-data', // Importante para indicar que estás enviando un formulario con datos binarios (archivos)
+      },
+    };
+
+    const id = decodedToken.id
+
+
+    try {
+      const response = await axios.get(`https://back-neilo-production.up.railway.app/api/comentarios/dashboard?id=${id}`, config);
+      
+      // Crea el token
+      const aux = response.data.data;
+      setUSERLIST(aux);
+
+    } catch (error) {
+      console.error('Error de carga de comentarios', error);
+    }
+
+  };
+
+  USERLIST.map((item) => {
+    return null; // El valor de retorno no es importante en este caso
+  });
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -91,8 +137,10 @@ export default function UserPage() {
 
   const [openModal3, setOpenModal3] = useState(false);
 
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = (event, id) => {
+    
     setOpen(event.currentTarget);
+    setidEvento(id);
   };
 
   const handleCloseMenu = () => {
@@ -107,7 +155,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = USERLIST.map((n) => n.alumno);
       setSelected(newSelecteds);
       return;
     }
@@ -153,6 +201,81 @@ export default function UserPage() {
     setOpenModal3(false);
   };
 
+
+  const [idEvento, setidEvento] = useState("");
+
+  const handleEliminarBack = async () => { 
+    try {
+      
+      await axios.delete('https://back-neilo-production.up.railway.app/api/comentarios/borrar', {
+        headers: {
+          'x-access-token': `${cookieValue}`,
+        },
+        data: {
+          id: idEvento
+        }
+      });
+
+      window.location.reload();
+
+    } catch (error) {
+      alert('Ocurrió un error inesperado. No se puedo eliminar el evento.');
+    }
+    setOpenModal3(false);
+
+  };
+
+  const handleAceptarBack = async () => { 
+
+    const config = {
+      headers: {
+        'x-access-token': `${cookieValue}`,
+      },
+    };
+
+    try {
+      await axios.put('https://back-neilo-production.up.railway.app/api/comentarios/modificar', {
+          id: idEvento,
+          estado: 'Aceptado'
+      },config)
+
+      window.location.reload();
+
+    } catch (error) {
+      alert('Ocurrió un error inesperado. No se puedo aceptar el comentario.');
+      console.log(error)
+    }
+
+
+  };
+
+  const handleRechazarBack = async () => { 
+
+    const config = {
+      headers: {
+        'x-access-token': `${cookieValue}`,
+      },
+    };
+
+    try {
+      await axios.put('https://back-neilo-production.up.railway.app/api/comentarios/modificar', {
+          id: idEvento,
+          estado: 'Rechazado'
+      },config)
+
+      window.location.reload();
+
+    } catch (error) {
+      alert('Ocurrió un error inesperado. No se puedo rechazar el comentario.');
+      console.log(error)
+    }
+
+
+  };
+
+  const jwtToken = getJwtToken();
+  const decodedToken = jwtDecode(jwtToken);
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -190,32 +313,32 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, servicio, comentario,estadoComentario, avatarUrl } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                    const { _id, alumno, nombreservicio, texto,estado } = row;
+                    const selectedUser = selected.indexOf(alumno) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox"/>
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
+                            <Avatar alt={alumno} src={''} />
                             <Typography variant="subtitle2" noWrap>
-                              {name}
+                              {alumno}
                             </Typography>
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{servicio}</TableCell>
-                        <TableCell align="left">{comentario}</TableCell>
+                        <TableCell align="left">{nombreservicio}</TableCell>
+                        <TableCell align="left">{texto}</TableCell>
 
 
                         <TableCell align="left">
-                          <Label color={(estadoComentario === 'Rechazado' && 'error') || (estadoComentario === 'Aceptado' && 'success') || 'primary'}>{sentenceCase(estadoComentario)}</Label>
+                          <Label color={(estado === 'Rechazado' && 'error') || (estado === 'Aceptado' && 'success') || 'primary'}>{sentenceCase(estado)}</Label>
                         </TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, _id)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -286,12 +409,12 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
+        <MenuItem onClick={handleAceptarBack}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Aceptar
         </MenuItem>
 
-        <MenuItem>
+        <MenuItem onClick={handleRechazarBack}>
           <Iconify icon={'eva:close-circle-outline'} sx={{ mr: 2 }} />
           Rechazar
         </MenuItem>
@@ -320,7 +443,7 @@ export default function UserPage() {
 
           <Box backgroundColor='white'>
             <Grid align="center">
-              <Button variant="contained" size="large" color="primary" onClick={''}>Eliminar</Button>
+              <Button variant="contained" size="large" color="primary" onClick={handleEliminarBack}>Eliminar</Button>
               <Button sx= {{ml: 3}} variant="outlined" size="large" color="primary" onClick={handleCloseModal3}>Volver atrás</Button>
             </Grid>
           </Box>

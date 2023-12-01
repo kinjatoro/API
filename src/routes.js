@@ -39,7 +39,7 @@ export default function Router() {
         { path: 'mispublicaciones', element: <MisPublicacionesPage /> },
         { path: 'comentarios', element: <ComentariosPage /> },
         { path: 'individualblog/:idBlog', element: <IndividualBlog />,},
-        { path: 'contratar', element: <ContratarPage />,},
+        { path: 'contratar/:idService', element: <ContratarPage />,},
         { path: 'crearservicio', element: <CrearServicioPage />,},
 
       ],

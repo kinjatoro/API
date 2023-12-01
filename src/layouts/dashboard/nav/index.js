@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 import { useLocation, Navigate, useNavigate } from 'react-router-dom';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
+import {jwtDecode} from 'jwt-decode';
 // mock
 import account from '../../../_mock/account';
+import accountNo from '../../../_mock/accountNo';
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
 // components
@@ -46,9 +48,30 @@ export default function Nav({ openNav, onCloseNav }) {
   const isDesktop = false;
 
   const { auth, setAuth } = useAuth();
+
+
+  function getJwtToken() {
+    const jwtCookie = document.cookie.split('; ').find(row => row.startsWith('jwtToken='));
+    return jwtCookie ? jwtCookie.split('=')[1] : null;
+  }
+  
+  const jwtToken = getJwtToken();
+  const decodedToken = jwtToken ? jwtDecode(jwtToken) : null;
+
+  const [username, setUsername] = useState(decodedToken ? decodedToken.name : accountNo.displayName);
+  const [logo, setLogo] = useState(decodedToken ? (decodedToken.imagen) : accountNo.photoURL);
+  
+
+
+
+
+
+
+
   const handleAuth = () => {
     onCloseNav();
     setAuth(false);
+    document.cookie = `jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     navigate('/dashboard');
   };
 
@@ -66,6 +89,17 @@ export default function Nav({ openNav, onCloseNav }) {
   const handleClick2 = () => {
     navigate('/register');
   }
+
+  const maxFileNameLength = 17;
+  const getFileDisplayName = () => {
+    if (username) {
+      if (username.length > maxFileNameLength) {
+        return `${username.slice(0, maxFileNameLength)}...`;
+      }
+      return username;
+    }
+    return '';
+  };
 
 
   const renderContent = (
@@ -90,11 +124,11 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ mb: 2, mx: 2.5 }}>
         <Link underline="none">
           <StyledAccount>
-            <Avatar src={account.photoURL} alt="photoURL" />
+            <Avatar src={logo} alt="photoURL" />
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
+                {getFileDisplayName(username)}
               </Typography>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>

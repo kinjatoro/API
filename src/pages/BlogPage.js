@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 
 import { Helmet } from 'react-helmet-async';
 // @mui
 import { Grid, Button, Container, Stack, Typography, Box,MenuItem,
   Menu,Drawer,IconButton,Divider,TextField,Checkbox,Select,FormGroup } from '@mui/material';
 
+import axios from 'axios';
 import { ProductSort} from '../sections/@dashboard/products';
 import Scrollbar from '../components/scrollbar';
 
@@ -20,20 +21,63 @@ import POSTS from '../_mock/blog';
 export default function BlogPage() {
 
 
-
+  
 
   const FILTER_CATEGORIA_OPTIONS = ['Matemática', 'Música', 'Química', 'Historia', 'Geografía', 'Inglés', 'Programación' ];
   const FILTER_TIPOCLASE_OPTIONS = ['Individual', 'Grupal'];
   const FILTER_RATING_OPTIONS = ['5 estrellas', '4 estrellas', '3 estrellas', '2 estrellas', '1 estrella'];
   const FILTER_FRECUENCIA_OPTIONS = ['Única', 'Semanal', 'Mensual'];
 
+  const [POSTS, setPOSTS] = useState([]);
+
   const [selectedCategoria, setSelectedCategoria] = useState([]);
   const [selectedTipo, setSelectedTipo] = useState([]);
   const [selectedRating, setSelectedRating] = useState([]);
   const [selectedFrecuencia, setSelectedFrecuencia] = useState([]);
 
+  const [URL, setURL] = useState("https://back-neilo-production.up.railway.app/api/servicios/getserviciosgen?");
 
-  const handleLogin = async () => {}
+  useEffect(() => {
+    handleLogin();
+  }, []);
+
+  const handleLogin = async () => {
+
+    try {
+      let newURL = "https://back-neilo-production.up.railway.app/api/servicios/getserviciosgen?";
+  
+      if (selectedCategoria.length > 0) {
+        const categorias = selectedCategoria.map((categoria) => `categoria=${categoria}`).join('&');
+        newURL += `${categorias}&`;
+      }
+      if (selectedTipo.length > 0) {
+        const tipos = selectedTipo.map((tipo) => `tipo=${tipo}`).join('&');
+        newURL += `${tipos}&`;
+      }
+      if (selectedRating.length > 0) {
+        const ratings = selectedRating.map((rating) => `rating=${rating}`).join('&');
+        newURL += `${ratings}&`;
+      }
+      if (selectedFrecuencia.length > 0) {
+        const frecuencias = selectedFrecuencia.map((frecuencia) => `frecuencia=${frecuencia}`).join('&');
+        newURL += `${frecuencias}&`;
+      }
+  
+      await setURL(newURL); // Actualiza URL de manera síncrona
+
+      const response = await axios.get(newURL); // Usa la nueva URL
+
+      const aux = response.data.data;
+      setPOSTS(aux);
+      setFilteredBlog(aux);
+    
+    } catch (error) {
+      console.error('Ocurrió un error al intentar cargar los posts', error);
+    }
+    setOpenFilter(false);
+  };
+
+
 
 
   const [openFilter, setOpenFilter] = useState(false);
@@ -63,7 +107,7 @@ export default function BlogPage() {
     setSearchQuery(e.target.value);
     // Filtra las cartas en función de la búsqueda y orden actual
     const filtered = POSTS.filter((card) =>
-      card.title.toLowerCase().includes(e.target.value.toLowerCase())
+      card.titulo.toLowerCase().includes(e.target.value.toLowerCase())
     );
     setFilteredBlog(filtered); // Actualiza el estado con el resultado de la búsqueda
   };
@@ -71,8 +115,8 @@ export default function BlogPage() {
   const handleMayorPrecio = () => {
     const sortedBlog = [...filteredBlog];
     sortedBlog.sort((a, b) => {
-      const priceA = a.price;
-      const priceB = b.price;
+      const priceA = parseInt(a.costo, 10);
+      const priceB = parseInt(b.costo, 10);
       return priceB - priceA;
     });
     setFilteredBlog(sortedBlog); // Actualiza el estado con el nuevo orden
@@ -83,8 +127,8 @@ export default function BlogPage() {
   const handleMenorPrecio = () => {
     const sortedBlog = [...filteredBlog];
     sortedBlog.sort((a, b) => {
-      const priceA = a.price;
-      const priceB = b.price;
+      const priceA = parseInt(a.costo, 10);
+      const priceB = parseInt(b.costo, 10);
       return  priceA - priceB;
     });
     setFilteredBlog(sortedBlog); // Actualiza el estado con el nuevo orden

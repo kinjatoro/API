@@ -61,15 +61,17 @@ BlogPostCardInd.propTypes = {
   index: PropTypes.number,
 };
 
-export default function BlogPostCardInd({ post, index }) {
-  const { cover, title, view, price, share,stars, author, createdAt } = post;
+export default function BlogPostCardInd({ post, index, usuario, banner, title }) {
+  const { _id, userid, descripcion, categoria,frecuencia, duracion, tipo,costo,rating,estado,comentarios,total } = post;
+  const {name,email,telefono,titulo,experiencia,imagen} = usuario
+
   const latestPostLarge = index === 500;
   const latestPost = index === 501 || index === 502;
 
   const POST_INFO = [
-    { string: share, icon: 'mdi:clock' },
-    { string: view, icon: 'solar:calendar-bold-duotone' },
-    { string: stars, icon: 'solar:star-bold' },
+    { string: duracion, icon: 'mdi:clock' },
+    { string: frecuencia, icon: 'solar:calendar-bold-duotone' },
+    { string: rating.toString().slice(0, 4), icon: 'solar:star-bold' },
     
     
   ];
@@ -81,7 +83,7 @@ export default function BlogPostCardInd({ post, index }) {
   };
 
   const handleClick2 = () => {
-    navigate('/dashboard/contratar');
+    navigate(`/dashboard/contratar/${_id}`);
   };
 
   return (
@@ -125,8 +127,8 @@ export default function BlogPostCardInd({ post, index }) {
             }}
           /> </div>
           <StyledAvatar
-            alt={author.name}
-            src={author.avatarUrl}
+            alt={imagen}
+            src={imagen}
             sx={{
               ...((latestPostLarge || latestPost) && {
                 zIndex: 9,
@@ -137,7 +139,7 @@ export default function BlogPostCardInd({ post, index }) {
               }),
             }}
           />
-         <StyledCover  alt={title} src={cover} />
+         <StyledCover  alt={banner} src={banner} />
           
         </StyledCardMedia>
 
@@ -151,9 +153,6 @@ export default function BlogPostCardInd({ post, index }) {
             }),
           }}
         >
-          <Typography gutterBottom variant="subtitle1" sx={{ color: 'text.disabled', display: 'block' }}>
-            Publicación creada el {fDate(createdAt)}.
-          </Typography>
 
           <StyledTitle
             color="inherit"
@@ -167,17 +166,17 @@ export default function BlogPostCardInd({ post, index }) {
           > 
          
           <Box sx={{display: "flex", flexDirection: "row", alignItems: 'center'}}>
-              {author.name} </Box>
+              {name} </Box>
           </StyledTitle>
           
-          <Typography sx={{textAlign: "justify", mt:-1}}>Soy un apasionado educador con una sólida formación académica. Graduado con honores en Educación de la Universidad de Fraile Muerto, continué mi desarrollo profesional obteniendo una maestría en Pedagogía en la Universidad del Cerro Champaquí, donde me enfoqué en integrar la tecnología en el aula para mejorar la experiencia de aprendizaje. Título: Licenciado en educación.</Typography>
+          <Typography sx={{textAlign: "justify", mt:-1}}>{experiencia}. Título: {titulo}</Typography>
           <Box sx={{borderTop: '1px solid #f0f0f0', mt:2}}> </Box>
           
-          <Typography sx={{textAlign: "justify", mt:2}}>Nuestra clase ofrece una emocionante y educativa experiencia en el agua para personas de todas las edades y niveles de habilidad. Diseñada para fomentar la confianza en el agua y mejorar las habilidades de natación, nuestra clase se lleva a cabo en un ambiente seguro y supervisado por instructores altamente calificados.</Typography>
+          <Typography sx={{textAlign: "justify", mt:2}}>{descripcion}</Typography>
             
           <StyledInfo>
             <div style={{display: 'flex', flexContent:"row"}}>
-          <Typography variant="h5" sx={{mr:1, color: "black"}}>{price}</Typography>
+          <Typography variant="h5" sx={{mr:1, color: "black"}}>{`$${costo}`}</Typography>
             {POST_INFO.map((info, index) => (
               <Box
                 key={index}

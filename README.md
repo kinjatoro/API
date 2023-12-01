@@ -1,16 +1,19 @@
-HOLA 2222 2111
+# PARA CORRER EL PROGRAMA
+
+1. Instalar NodeJS (https://nodejs.org/en) y VS Code (https://code.visualstudio.com/download)
+2. Abir VS Code
+3. Darle a "clone github repository" y pegar `https://github.com/kinjatoro/SEMINARIO`
+4. Seleccionar la carpeta donde querés que se instale (no es necesario crear una nueva, al clonar el proyecto se crea una carpeta contenedora automáticamente).
+5. Abrir la terminal (CTRL ñ)
+6. Ejecutar el comando `npm init react-app temporal`
+7. En esa nueva carpeta creada, arrastrar el "node_modules" afuera de esa carpeta, al mismo nivel que scr y public.
+8. Borrar la carpeta temporal
+9. Ejecutar en la terminal `npm install`
+10. Ejecutar `npm start`
 
 https://mui.com/material-ui/getting-started/
 
-Para correr el programa hay q bajarlo de github, pero tiene q estar la carpeta de node_modules
-
-yo lo q hice es bajar el repositorio y copipastearle el node_modules de otro proyecto react.
-
-Lista de íconos -> https://mui.com/material-ui/material-icons/
-
 Probar estilos -> https://bareynol.github.io/mui-theme-creator/
-
-scrollbar -> `npm install perfect-scrollbar`
 
 ---
 ### **TEMPLATES** 
@@ -160,9 +163,4 @@ Estructura básica de la carta:
 ```
 <br>
 
-#### [Lista (compuesto)](https://mui.com/material-ui/react-list/) `<List/>` `<ListItem/>` `<ListItemIcon/>` `<ListItemText/>``<Divider/>`
 
-Estructura básica de la lista:
-```javascript
-
-```

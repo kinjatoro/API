@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import {jwtDecode} from 'jwt-decode';
 
 // mocks_
 import account from '../../../_mock/account';
@@ -31,6 +32,7 @@ export default function AccountPopover() {
     setOpen(null);
     setAuth(false);
     navigate('/dashboard/app');
+    document.cookie = `jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   };
 
   const handleInicio = () => {
@@ -62,6 +64,19 @@ export default function AccountPopover() {
     navigate('/dashboard/comentarios');
   };
 
+  function getJwtToken() {
+    const jwtCookie = document.cookie.split('; ').find(row => row.startsWith('jwtToken='));
+    return jwtCookie ? jwtCookie.split('=')[1] : null;
+  }
+  
+  const jwtToken = getJwtToken();
+  const decodedToken = jwtToken ? jwtDecode(jwtToken) : null;
+  
+
+  const [username, setUsername] = useState(decodedToken ? decodedToken.name : accountNo.displayName);
+  const [email, setEmail] = useState(decodedToken ? decodedToken.email : accountNo.email);
+  const [logo, setLogo] = useState(decodedToken ? (decodedToken.imagen) : accountNo.photoURL);
+
 
   return (
     <>
@@ -82,7 +97,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        {auth ? (<Avatar src={account.photoURL} alt="photoURL" />) : (<><Avatar src={accountNo.photoURL} alt="photoURL" /></>)}
+        {auth ? (<Avatar src={logo} alt="photoURL" />) : (<><Avatar src={accountNo.photoURL} alt="photoURL" /></>)}
         
       </IconButton>
 
@@ -107,10 +122,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-          {auth ? (<>{account.displayName}</>) : (<>{accountNo.displayName}</>)}
+          {auth ? (<>{username}</>) : (<>{accountNo.displayName}</>)}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {auth ? (<>{account.email}</>) : (<></>)}
+            {auth ? (<>{email}</>) : (<></>)}
           </Typography>
         </Box>
 

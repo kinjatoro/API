@@ -1,7 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 // @mui
 import {
   Card,
@@ -70,12 +72,57 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.alumno.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 export default function UserPage() {
+
+  const [USERLIST, setUSERLIST] = useState([]);
+
+
+  useEffect(() => {
+    handleLogin();
+  }, []);
+
+  function getJwtToken() {
+    const jwtCookie = document.cookie.split('; ').find(row => row.startsWith('jwtToken='));
+    return jwtCookie ? jwtCookie.split('=')[1] : null;
+  }
+
+  const cookieValue = getJwtToken();
+
+  const handleLogin = async () => {
+
+    const config = {
+      headers: {
+        'x-access-token': `${cookieValue}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
+    const id = decodedToken.id
+
+
+    try {
+      const response = await axios.get(`https://back-neilo-production.up.railway.app/api/contratos/getcontrataciones?id=${id}`, config);
+      
+      // Crea el token
+      const aux = response.data.data;
+      setUSERLIST(aux);
+
+    } catch (error) {
+      console.error('Error de carga de contratos', error);
+    }
+
+  };
+
+  USERLIST.map((item) => {
+    return null;
+  });
+
+
 
   const [open, setOpen] = useState(null);
 
@@ -93,8 +140,9 @@ export default function UserPage() {
 
   const [openModal3, setOpenModal3] = useState(false);
 
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = (event, id) => {
     setOpen(event.currentTarget);
+    setidEvento(id);
   };
 
   const handleCloseMenu = () => {
@@ -119,7 +167,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = USERLIST.map((n) => n.alumno);
       setSelected(newSelecteds);
       return;
     }
@@ -154,6 +202,102 @@ export default function UserPage() {
     setPage(0);
     setFilterName(event.target.value);
   };
+
+  const [idEvento, setidEvento] = useState("");
+
+
+
+  const handleEliminarBack = async () => { 
+    try {
+      
+      await axios.delete('https://back-neilo-production.up.railway.app/api/contratos/borrar', {
+        headers: {
+          'x-access-token': `${cookieValue}`,
+        },
+        data: {
+          id: idEvento
+        }
+      });
+
+      window.location.reload();
+
+    } catch (error) {
+      alert('Ocurrió un error inesperado. No se puedo eliminar el contrato.');
+    }
+    setOpenModal3(false);
+
+  };
+
+  const handleAceptarBack = async () => { 
+
+    const config = {
+      headers: {
+        'x-access-token': `${cookieValue}`,
+      },
+    };
+
+    try {
+      await axios.put('https://back-neilo-production.up.railway.app/api/contratos/modificar', {
+          id: idEvento,
+          estado: 'Aceptada'
+      },config)
+
+      window.location.reload();
+
+    } catch (error) {
+      alert('Ocurrió un error inesperado. No se puedo aceptar el contrato.');
+      console.log(error)
+    }
+
+
+  };
+
+  const handleRechazarBack = async () => { 
+    const config = {
+      headers: {
+        'x-access-token': `${cookieValue}`,
+      },
+    };
+
+    try {
+      await axios.put('https://back-neilo-production.up.railway.app/api/contratos/modificar', {
+          id: idEvento,
+          estado: 'Cancelada'
+      },config)
+
+      window.location.reload();
+
+    } catch (error) {
+      alert('Ocurrió un error inesperado. No se puedo cancelar el contrato.');
+      console.log(error)
+    }
+  };
+
+  const handleFinalizarBack = async () => { 
+    const config = {
+      headers: {
+        'x-access-token': `${cookieValue}`,
+      },
+    };
+
+    try {
+      await axios.put('https://back-neilo-production.up.railway.app/api/contratos/modificar', {
+          id: idEvento,
+          estado: 'Finalizada'
+      },config)
+
+      window.location.reload();
+
+    } catch (error) {
+      alert('Ocurrió un error inesperado. No se puedo finalizar el contrato.');
+      console.log(error)
+    }
+  };
+
+  const jwtToken = getJwtToken();
+  const decodedToken = jwtDecode(jwtToken);
+
+
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
@@ -191,39 +335,39 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, servicio, telefono, mail, horario,status, avatarUrl } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                    const { _id, userid, alumno, servicio, telefono, email,horario, estado } = row;
+                    const selectedUser = selected.indexOf(alumno) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox"/>
                           
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
+                            <Avatar alt={alumno} src={''} />
                             <Typography variant="subtitle2" noWrap>
-                              {name}
+                              {alumno}
                             </Typography>
                           </Stack>
                         </TableCell>
 
                         <TableCell align="left">{servicio}</TableCell>
                         <TableCell align="left">{telefono}</TableCell>
-                        <TableCell align="left">{mail}</TableCell>
+                        <TableCell align="left">{email}</TableCell>
                         <TableCell align="left">{horario}</TableCell>
 
                         <TableCell align="left">
-                          <Label color={(status === 'Cancelada' && 'error') || 
-                          (status === 'Aceptada' && 'success') || 
-                          (status === 'Pendiente' && 'warning')
+                          <Label color={(estado === 'Cancelada' && 'error') || 
+                          (estado === 'Aceptada' && 'success') || 
+                          (estado === 'Pendiente' && 'warning')
                            || 'primary'}>
-                            {sentenceCase(status)}
+                            {sentenceCase(estado)}
                             </Label>
                         </TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, _id)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -294,9 +438,19 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Editar estado
+        <MenuItem onClick={handleAceptarBack}>
+          <Iconify icon={'eva:checkmark-outline'} sx={{ mr: 2 }} />
+          Aceptar
+        </MenuItem>
+
+        <MenuItem onClick={handleFinalizarBack}>
+          <Iconify icon={'eva:corner-down-left-outline'} sx={{ mr: 2 }} />
+          Finalizar
+        </MenuItem>
+
+        <MenuItem onClick={handleRechazarBack}>
+          <Iconify icon={'eva:close-circle-outline'} sx={{ mr: 2 }} />
+          Cancelar
         </MenuItem>
 
         <MenuItem onClick={handleEliminar} sx={{ color: 'error.main' }}>
@@ -323,7 +477,7 @@ export default function UserPage() {
 
           <Box backgroundColor='white'>
             <Grid align="center">
-              <Button variant="contained" size="large" color="primary" onClick={''}>Eliminar</Button>
+              <Button variant="contained" size="large" color="primary" onClick={handleEliminarBack}>Eliminar</Button>
               <Button sx= {{ml: 3}} variant="outlined" size="large" color="primary" onClick={handleCloseModal3}>Volver atrás</Button>
             </Grid>
           </Box>
