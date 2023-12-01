@@ -69,7 +69,7 @@ export default function AppNewsUpdate({ title, subheader, list, ...other }) {
           texto: text,
           titulo: aux[0].titulo,
           calificacion: rating,
-          estado: 'Rechazado'
+          estado: 'Pendiente'
         }
         
       );
@@ -159,7 +159,7 @@ function NewsItem({ news }) {
 
   return (
     <Stack direction="row" alignItems="center" spacing={2} sx={{borderTop: '1px solid #f0f0f0', }}>
-      <Box component="img" alt={''} src={''} sx={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
+      <Box component="img" alt={'comentario'} src={`/assets/images/avatars/avatar_${Math.floor(Math.random() * 24) + 1}.jpg`} sx={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
 
       <Box sx={{ minWidth: 240, flexGrow: 1 }}>
         <Link color="inherit" variant="subtitle2" underline="hover" noWrap>
