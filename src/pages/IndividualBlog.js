@@ -60,7 +60,12 @@ export default function BlogPage() {
       const aux3 = response3.data.data;
       const comentariosAceptados = aux3.filter((comentario) => comentario.estado === "Aceptado");
 
-      setComentarios(comentariosAceptados);
+      const updatedJsons = comentariosAceptados.map((json, index) => ({
+        ...json,
+        avatarSrc: `/assets/images/avatars/avatar_${index + 1}.jpg`
+      }));
+
+      setComentarios(updatedJsons);
 
     } catch (error) {
       console.error('Ocurrió un error al intentar cargar los datos', error);
