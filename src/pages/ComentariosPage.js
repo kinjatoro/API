@@ -112,7 +112,7 @@ export default function UserPage() {
 
       const updatedJsons = aux.map((json, index) => ({
         ...json,
-        avatarSrc: generateRandomAvatar()
+        avatarSrc: `/assets/images/avatars/avatar_${index + 1}.jpg`
       }));
 
       setUSERLIST(updatedJsons);
