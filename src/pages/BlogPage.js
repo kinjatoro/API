@@ -37,6 +37,8 @@ export default function BlogPage() {
 
   const [URL, setURL] = useState("https://back-neilo-production.up.railway.app/api/servicios/getserviciosgen?");
 
+  const [usuarios, setUsuarios] = useState(null);
+
   useEffect(() => {
     handleLogin();
   }, []);
@@ -66,8 +68,13 @@ export default function BlogPage() {
       await setURL(newURL); // Actualiza URL de manera síncrona
 
       const response = await axios.get(newURL); // Usa la nueva URL
-
       const aux = response.data.data;
+
+      const response2 = await axios.get('https://back-neilo-production.up.railway.app/api/users/users')
+      const aux2 = response2.data.data;
+      setUsuarios(aux2);
+
+      
 
       const aceptados = aux.filter((servicio) => servicio.estado === "Publicado");
 
@@ -79,6 +86,7 @@ export default function BlogPage() {
     }
     setOpenFilter(false);
   };
+
 
 
 
@@ -262,7 +270,24 @@ export default function BlogPage() {
                       {"Destacado"}
                     </MenuItem>
                   
+                    <MenuItem
+                      key={"mayor precio"}
+                      selected={"mayor precio" === 'newest'}
+                      onClick={handleMayorPrecio}
+                      sx={{ typography: 'body2' }}
+                    >
+                      {"Mayor precio"}
+                    </MenuItem>
 
+
+                    <MenuItem
+                      key={"menor precio"}
+                      selected={"menor precio" === 'newest'}
+                      onClick={handleMenorPrecio}
+                      sx={{ typography: 'body2' }}
+                    >
+                      {"Menor precio"}
+                    </MenuItem>
 
 
 
@@ -313,10 +338,20 @@ export default function BlogPage() {
 
 
         <Grid container spacing={3}>
-          {filteredBlog.map((post, index) => (
-            <BlogPostCard post={post} index={index} />
-          ))}
-        </Grid>
+  {filteredBlog.length === 0 ? (
+    <Typography variant="body1" sx={{ml:4, mt:1}}>
+      No se encontraron servicios.
+    </Typography>
+  ) : (
+    filteredBlog.map((post, index) => (
+      <BlogPostCard post={post} index={index} usuarios={usuarios} />
+    ))
+  )}
+</Grid>
+
+
+
+
       </Container>
 
 

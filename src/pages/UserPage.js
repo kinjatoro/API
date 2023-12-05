@@ -23,7 +23,7 @@ import {
   Typography,
   IconButton,
   TableContainer,
-  TablePagination,Modal,Box,Grid,
+  TablePagination,Modal,Box,Grid,TextField,
 } from '@mui/material';
 // components
 import Label from '../components/label';
@@ -148,9 +148,12 @@ export default function UserPage() {
 
   const [openModal3, setOpenModal3] = useState(false);
 
-  const handleOpenMenu = (event, id) => {
+  const [openModal4, setOpenModal4] = useState(false);
+
+  const handleOpenMenu = (event, id, alumno) => {
     setOpen(event.currentTarget);
     setidEvento(id);
+    setAlumnoActual(alumno);
   };
 
   const handleCloseMenu = () => {
@@ -161,11 +164,48 @@ export default function UserPage() {
     setOpenModal3(false);
   };
 
+  const handleCloseModal4 = () => {
+    setOpenModal4(false);
+  };
+
   const handleEliminar = () => { 
     setOpenModal3(true);
     setOpen(null);
     
   };
+
+  const [mensajeActual, setMensajeActual] = useState();
+  const [alumnoActual, setAlumnoActual] = useState();
+
+  const handleMensajeBack = async () => {
+    const config = {
+      headers: {
+        'x-access-token': `${cookieValue}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
+    const id = decodedToken.id
+
+
+    try {
+      const response = await axios.get(`https://back-neilo-production.up.railway.app/api/mensajes/get?id=${id}`, config);
+      
+      // Crea el token
+      const aux = response.data.data;
+
+      const mensajeFiltrado = aux.filter(mensaje => mensaje.alumno === alumnoActual);
+
+      setMensajeActual(mensajeFiltrado[0]);
+
+      console.log(mensajeActual);
+
+      setOpenModal4(true);
+
+    } catch (error) {
+      console.error('Error de carga de contratos', error);
+    }
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -382,7 +422,7 @@ export default function UserPage() {
                         </TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, _id)}>
+                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, _id,alumno)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -453,6 +493,12 @@ export default function UserPage() {
           },
         }}
       >
+
+        <MenuItem onClick={handleMensajeBack}>
+          <Iconify icon={'eva:email-outline'} sx={{ mr: 2 }} />
+          Ver mensaje
+        </MenuItem>
+
         <MenuItem onClick={handleAceptarBack}>
           <Iconify icon={'eva:checkmark-outline'} sx={{ mr: 2 }} />
           Aceptar
@@ -492,12 +538,58 @@ export default function UserPage() {
 
           <Box backgroundColor='white'>
             <Grid align="center">
-              <Button variant="contained" size="large" color="primary" onClick={handleEliminarBack}>Eliminar</Button>
-              <Button sx= {{ml: 3}} variant="outlined" size="large" color="primary" onClick={handleCloseModal3}>Volver atrás</Button>
+              <Button sx= {{ml: 3}} variant="outlined" size="large" color="primary" onClick={handleCloseModal4}>Volver atrás</Button>
             </Grid>
           </Box>
         </Container>
       </Modal>
+
+
+
+
+
+
+      <Modal
+        open={openModal4}
+        onClose={handleCloseModal4}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Container maxWidth="sm" sx={{ mt:25, padding: '20px', maxHeight: '675px', backgroundColor: 'white', borderRadius: 5 }}>
+
+          <Box mt={1} mb={2} backgroundColor='white' align='center'>
+            <Typography variant="h4" gutterBottom>
+
+            <strong>Mensaje del alumno</strong>
+            </Typography>
+          </Box>
+
+          <TextField
+  name="Mensaje"
+  multiline
+  rows={5}
+  value={mensajeActual && mensajeActual.mensaje !== undefined ? mensajeActual.mensaje : ''}
+  InputProps={{
+    readOnly: true,
+  }}
+  style={{ width: '100%' }}
+/>
+
+
+
+          <Box backgroundColor='white'>
+            <Grid align="center">
+              <Button sx= {{mt:2}} variant="outlined" size="large" color="primary" onClick={handleCloseModal4}>Volver atrás</Button>
+            </Grid>
+          </Box>
+        </Container>
+      </Modal>
+
+
+
+
+
+
     </>
   );
 }

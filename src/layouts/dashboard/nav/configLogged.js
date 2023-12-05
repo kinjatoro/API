@@ -21,11 +21,6 @@ const navConfig = [
     icon: <Iconify icon={"eva:people-fill"} />,
   },
   {
-    title: 'mensajes',
-    path: '/dashboard/mensajes',
-    icon: <Iconify icon={'eva:message-square-fill'} />  
-  },
-  {
     title: 'mis publicaciones',
     path: '/dashboard/mispublicaciones',
     icon: <Iconify icon={'eva:layers-fill'} />

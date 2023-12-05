@@ -61,29 +61,12 @@ BlogPostCard.propTypes = {
   index: PropTypes.number,
 };
 
-export default function BlogPostCard({ post, index }) {
-  const { _id, userid, titulo, descripcion, categoria,frecuencia, duracion, tipo,costo,rating,estado,comentarios,imagen,total } = post;
+export default function BlogPostCard({ post, index, usuarios }) {
+  const { _id, userid, titulo, descripcion, categoria,frecuencia, duracion, tipo,costo,rating,estado,comentarios,imagen,total} = post;
   const latestPostLarge = index === 500;
   const latestPost = index === 501 || index === 502;
-  const [user, setUser] = useState();
-
-  useEffect(() => {
-    handleLogin();
-  }, []);
-
-
-  const handleLogin = async () => {
-
-    try {
-      const response = await axios.get(`https://back-neilo-production.up.railway.app/api/users/getuser?id=${userid}`);
-      const aux = response.data.data;
-      setUser(aux[0]);
-    } catch (e){
-      console.error('Ocurrió un error al intentar cargar los posts', e);
-    }
-  }
-
-  
+  const aux = usuarios.filter((usuario) => usuario._id === userid);
+  const user = aux[0];
 
   const POST_INFO = [
     { string: duracion === '30 Minutos' ? '30 Min.' : duracion, icon: 'mdi:clock' },

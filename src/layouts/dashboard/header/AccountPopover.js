@@ -147,9 +147,6 @@ export default function AccountPopover() {
               Contrataciones
             </MenuItem>
 
-            <MenuItem onClick={handleMensajes}>
-              Mensajes
-            </MenuItem>
 
             <MenuItem onClick={handleMisPublicaciones}>
               Mis publicaciones
