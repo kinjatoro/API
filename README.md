@@ -1,8 +1,13 @@
 # PARA CORRER EL PROGRAMA
 
+### **Desde la página web** 
+* Entrar a https://neilo.vercel.app/
+
+### **Local** 
+
 1. Instalar NodeJS (https://nodejs.org/en) y VS Code (https://code.visualstudio.com/download)
 2. Abir VS Code
-3. Darle a "clone github repository" y pegar `https://github.com/kinjatoro/SEMINARIO`
+3. Darle a "clone github repository" y pegar `https://github.com/kinjatoro/API`
 4. Seleccionar la carpeta donde querés que se instale (no es necesario crear una nueva, al clonar el proyecto se crea una carpeta contenedora automáticamente).
 5. Abrir la terminal (CTRL ñ)
 6. Ejecutar el comando `npm init react-app temporal`
@@ -11,7 +16,13 @@
 9. Ejecutar en la terminal `npm install`
 10. Ejecutar `npm start`
 
-https://mui.com/material-ui/getting-started/
+---
+
+Usuario ya creado, con datos cargados:
+* Email: `mariog@gmail.com`
+* Contraseña: `mariog@gmail.com`
+
+Documentación MUI -> https://mui.com/material-ui/getting-started/
 
 Probar estilos -> https://bareynol.github.io/mui-theme-creator/
 
@@ -162,5 +173,3 @@ Estructura básica de la carta:
 </Card>
 ```
 <br>
-
-
