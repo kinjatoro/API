@@ -339,9 +339,7 @@ export default function BlogPage() {
 
         <Grid container spacing={3}>
   {filteredBlog.length === 0 ? (
-    <Typography variant="body1" sx={{ml:4, mt:1}}>
-      No se encontraron servicios.
-    </Typography>
+    <Typography variant="body1" sx={{ml:4, mt:1}}/>
   ) : (
     filteredBlog.map((post, index) => (
       <BlogPostCard post={post} index={index} usuarios={usuarios} />
