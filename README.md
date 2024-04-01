@@ -10,11 +10,9 @@
 3. Darle a "clone github repository" y pegar `https://github.com/kinjatoro/API`
 4. Seleccionar la carpeta donde querés que se instale (no es necesario crear una nueva, al clonar el proyecto se crea una carpeta contenedora automáticamente).
 5. Abrir la terminal (CTRL ñ)
-6. Ejecutar el comando `npm init react-app temporal`
-7. En esa nueva carpeta creada, arrastrar el "node_modules" afuera de esa carpeta, al mismo nivel que scr y public.
-8. Borrar la carpeta temporal
-9. Ejecutar en la terminal `npm install`
-10. Ejecutar `npm start`
+6. Ejecutar el comando `npm init react-app Neilo`
+7. Ejecutar en la terminal `npm i`
+8. Ejecutar `npm start`
 
 ---
 
